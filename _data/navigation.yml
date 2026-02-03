@@ -1,9 +1,9 @@
 main:
-  - title: "Dev Log"
-    url: /categories/#dev-log
-  - title: "Travel"
-    url: /categories/#trip
-  - title: "Cafe & Food"
-    url: /categories/#cafe-food
-  - title: "About"
+  - title: "개발일지"
+    url: /dev/
+  - title: "여행"
+    url: /travel/
+  - title: "맛집/카페"
+    url: /food/
+  - title: "소개"
     url: /about/
