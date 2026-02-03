@@ -22,9 +22,35 @@ url: "https://libok03.github.io" # the base hostname & protocol for your site, e
 twitter_username: jekyllrb
 github_username:  libok03
 
+# Defaults
+defaults:
+  # _posts
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: single
+      author_profile: true
+      read_time: true
+      comments: true
+      share: true
+      related: true
+
+# Build settings
 # Build settings
 markdown: kramdown
 remote_theme: "mmistakes/minimal-mistakes"
+minimal_mistakes_skin: "dark" # "default", "air", "aqua", "contrast", "dark", "dirt", "neon", "mint", "plum", "sunrise"
+
+# Author
+author:
+  name   : "libok03"
+  avatar : "/assets/images/bio-photo.jpg"
+  bio    : "Developer & Tech Enthusiast"
+  links:
+    - label: "GitHub"
+      icon: "fab fa-fw fa-github"
+      url: "https://github.com/libok03"
 # theme: minima
 plugins:
   - jekyll-feed
