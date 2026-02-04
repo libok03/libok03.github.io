@@ -1,0 +1,82 @@
+/* Custom styles to make content wider and responsive */
+
+/* Override the theme's default max-width */
+.page {
+    @media (min-width: 80em) {
+        max-width: none !important;
+        padding-right: 20px !important;
+        width: calc(100% - 320px) !important;
+        float: right !important;
+    }
+
+    @media (min-width: 64em) and (max-width: 80em) {
+        max-width: none !important;
+        padding-right: 20px !important;
+        width: calc(100% - 280px) !important;
+        float: right !important;
+    }
+
+    @media (min-width: 48em) and (max-width: 64em) {
+        max-width: none !important;
+        padding-right: 20px !important;
+        width: calc(100% - 240px) !important;
+        float: right !important;
+    }
+}
+
+.archive {
+    @media (min-width: 80em) {
+        max-width: none !important;
+        padding-right: 20px !important;
+        width: calc(100% - 320px) !important;
+        float: right !important;
+    }
+
+    @media (min-width: 64em) and (max-width: 80em) {
+        max-width: none !important;
+        padding-right: 20px !important;
+        width: calc(100% - 280px) !important;
+        float: right !important;
+    }
+}
+
+/* Remove margin constraints on main container */
+#main {
+    @media (min-width: 80em) {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        max-width: none !important;
+    }
+}
+
+/* Sidebar width */
+.sidebar,
+.sidebar.sticky {
+    @media (min-width: 80em) {
+        width: 300px !important;
+    }
+
+    @media (min-width: 64em) and (max-width: 80em) {
+        width: 260px !important;
+    }
+}
+
+/* Make content area use full available width */
+.page__inner-wrap {
+    max-width: none !important;
+}
+
+.page__content {
+    max-width: none !important;
+}
+
+/* Limit text width for readability */
+.page__content>p,
+.page__content>ul,
+.page__content>ol,
+.page__content>h1,
+.page__content>h2,
+.page__content>h3,
+.page__content>h4 {
+    max-width: 1000px;
+}
