@@ -26,8 +26,3 @@ moveit은 이 두개 파일을 받아서 기획을 해주는데 이때 yaml파�
 
 ## 3. 남은 의문점 및 향후 계획
 여기까지는 내가 아는 내용들 같은데 이제 도대체 URDF가 Gazebo랑 연결되지 않는건지, 이러면서 moveit이랑은 연결되는건지 어제는 왜 안됬는지 모르겠다. 저녁 먹으면서 머리식히고, 다시 시도해봐야겠다.
-
-```bash
-git add .
-git commit -m "Fix: Gazebo and Rviz connection troubleshooting"
-git push
