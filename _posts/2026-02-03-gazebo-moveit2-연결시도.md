@@ -1,6 +1,7 @@
 ---
 title: "UR5e + Robotiq MoveIt2 연동 삽질... 4시간 날리고 깨달은 점"
 date: 2026-02-03 17:00:00 +0900
+layout: single
 categories: 
   - Dev Log
 tags:
