@@ -1,5 +1,53 @@
 --- --- @charset "utf-8";
 
-@import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}"; // skin
-@import "minimal-mistakes"; // main partials
-@import "custom"; // custom styles
+@import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}";
+@import "minimal-mistakes";
+
+/* Custom width overrides for large screens */
+@media (min-width: 80em) {
+    #main {
+        max-width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    .page,
+    .archive {
+        max-width: 100% !important;
+        width: calc(100% - 300px) !important;
+        padding-left: 1em !important;
+        padding-right: 1em !important;
+        float: right !important;
+    }
+
+    .sidebar {
+        width: 300px !important;
+    }
+
+    .page__inner-wrap {
+        max-width: 100% !important;
+        padding: 0 !important;
+    }
+
+    .page__content {
+        max-width: 100% !important;
+        padding: 0 !important;
+    }
+}
+
+@media (min-width: 64em) and (max-width: 80em) {
+
+    .page,
+    .archive {
+        max-width: 100% !important;
+        width: calc(100% - 250px) !important;
+        padding-left: 1em !important;
+        padding-right: 1em !important;
+    }
+
+    .sidebar {
+        width: 250px !important;
+    }
+}
