@@ -1,0 +1,65 @@
+---
+# Only the main Sass file needs front matter (the dashes are enough)
+---
+
+@charset "utf-8";
+
+@import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}"; // skin
+@import "minimal-mistakes"; // main partials
+
+/* Custom styles to make content wider and responsive */
+.page__content {
+  max-width: 100% !important;
+  width: 100% !important;
+}
+
+.page {
+  @media (min-width: 80em) {
+    max-width: 1400px !important;
+    padding-right: 400px !important;
+  }
+  
+  @media (min-width: 64em) and (max-width: 80em) {
+    max-width: 1200px !important;
+    padding-right: 350px !important;
+  }
+  
+  @media (min-width: 48em) and (max-width: 64em) {
+    max-width: 100% !important;
+    padding-right: 300px !important;
+  }
+}
+
+.archive {
+  @media (min-width: 80em) {
+    max-width: 1400px !important;
+    padding-right: 400px !important;
+  }
+  
+  @media (min-width: 64em) and (max-width: 80em) {
+    max-width: 1200px !important;
+    padding-right: 350px !important;
+  }
+}
+
+/* Make sidebar responsive */
+.sidebar {
+  @media (min-width: 80em) {
+    width: 350px !important;
+  }
+  
+  @media (min-width: 64em) and (max-width: 80em) {
+    width: 300px !important;
+  }
+}
+
+/* Adjust page content area */
+.page__inner-wrap {
+  max-width: 100% !important;
+}
+
+/* Make images responsive */
+.page__content img {
+  max-width: 100%;
+  height: auto;
+}
