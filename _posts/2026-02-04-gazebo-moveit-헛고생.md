@@ -1,7 +1,5 @@
 ---
-title: "어제에 이어서 오늘도 개 헛고생을 했다"
-date: 2026-02-04 16:00:00 +0900
-layout: single
+title:  "어제에 이어서 오늘도 개 헛고생을 했다"
 categories: 
   - Dev Log
 tags:
