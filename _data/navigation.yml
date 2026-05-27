@@ -3,6 +3,8 @@ main:
     url: /projects/
   - title: "개발일지"
     url: /dev/
+  - title: "글쓰기"
+    url: /write/
   - title: "여행"
     url: /travel/
   - title: "맛집/카페"
