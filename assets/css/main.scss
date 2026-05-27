@@ -61,7 +61,7 @@ a {
 }
 
 .home-page .page__content {
-  width: min(100%, 1680px);
+  width: 100%;
   margin: 0 auto;
   padding: 0 clamp(1rem, 3vw, 2.5rem);
 }
