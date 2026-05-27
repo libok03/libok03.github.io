@@ -6,10 +6,11 @@ author_profile: true
 classes: wide
 ---
 
-GitHub에 흩어져 있던 프로젝트를 주제별로 정리했습니다. 공개 저장소는 저장소 링크와 함께 자세히 다루고, 비공개 저장소는 공개 가능한 범위에서 활동 기록으로만 남깁니다.
+GitHub에 흩어져 있던 공개 프로젝트를 주제별로 정리했습니다. 각 프로젝트는 문제 상황, 구현 과정, 막혔던 지점, 배운 점을 블로그 글로 이어서 정리합니다.
 
 <div class="project-grid project-grid--archive">
-  {% for project in site.data.projects %}
+  {% assign public_projects = site.data.projects | where: "status", "Public" %}
+  {% for project in public_projects %}
     <article class="project-card">
       <p class="project-card__type">{{ project.type }} · {{ project.status }}</p>
       <h2><a href="{{ project.repo }}">{{ project.name }}</a></h2>

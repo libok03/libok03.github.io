@@ -91,45 +91,6 @@
   status: Public
   tags:
     - Prototype
-- name: ilbox
-  type: Private Project
-  repo: https://github.com/libok03/ilbox
-  summary: 비공개 저장소입니다. 공개 블로그에는 상세 코드 대신 프로젝트 진행 기록의 목차 수준으로만 남깁니다.
-  status: Private
-  tags:
-    - Private
-- name: ROS2_ws
-  type: Private Robotics Workspace
-  repo: https://github.com/libok03/ROS2_ws
-  summary: ROS2 학습과 실험을 모아둔 비공개 워크스페이스입니다. 공개 가능한 내용은 별도 개발일지로 정리합니다.
-  status: Private
-  tags:
-    - ROS2
-    - Private
-- name: backjoonmunjaepuli
-  type: Algorithm Practice
-  repo: https://github.com/libok03/backjoonmunjaepuli
-  summary: 백준 문제 풀이 기록을 모아둔 비공개 저장소입니다. 알고리즘 연습 흐름을 추후 공개 글로 요약할 수 있습니다.
-  status: Private
-  tags:
-    - Algorithm
-    - Practice
-- name: algorithms
-  type: Algorithm Practice
-  repo: https://github.com/libok03/algorithms
-  summary: 알고리즘 구현과 풀이 패턴을 정리한 비공개 저장소입니다.
-  status: Private
-  tags:
-    - Algorithm
-    - Private
-- name: french_learning_game
-  type: Learning Game
-  repo: https://github.com/libok03/french_learning_game
-  summary: 프랑스어 학습을 게임 형태로 실험한 비공개 프로젝트입니다.
-  status: Private
-  tags:
-    - Game
-    - Learning
 - name: libok03.github.io
   type: Blog
   repo: https://github.com/libok03/libok03.github.io

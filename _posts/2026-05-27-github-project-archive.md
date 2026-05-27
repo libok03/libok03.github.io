@@ -22,9 +22,9 @@ GitHub에 있는 저장소들을 블로그에서 볼 수 있도록 한 번 정�
 | 연구 실험 | [HW-NAS-YOLO](https://github.com/libok03/HW-NAS-YOLO) | hardware-aware NAS와 YOLO 탐색 |
 | 웹/기타 | [irol-lab-website](https://github.com/libok03/irol-lab-website), [dinner_project](https://github.com/libok03/dinner_project), [waterpray](https://github.com/libok03/waterpray) | 웹사이트, 작은 앱, 프로토타입 |
 
-## 공개 저장소와 비공개 저장소
+## 공개 저장소 중심으로 정리하기
 
-공개 저장소는 프로젝트 페이지와 개발일지에서 자세히 다룬다. 비공개 저장소는 블로그가 공개되어 있기 때문에 코드나 내부 내용을 그대로 공개하지 않고, 어떤 종류의 활동을 했는지 정도만 기록한다. 예를 들어 `ROS2_ws`는 ROS2 실험 워크스페이스, `backjoonmunjaepuli`와 `algorithms`는 알고리즘 풀이와 구현 연습의 흔적이다.
+블로그에는 공개 저장소를 중심으로 정리한다. 각 글은 저장소 링크만 나열하는 대신, 프로젝트를 시작한 이유와 구현 과정에서 배운 점을 남기는 방식으로 보강한다.
 
 ## 앞으로의 정리 방식
 
