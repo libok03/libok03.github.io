@@ -1,0 +1,141 @@
+- name: ACCA2026
+  type: Autonomous Driving
+  repo: https://github.com/libok03/ACCA2026
+  summary: ERP42 기반 자율주행 스택을 ROS2/C++ 중심으로 구성한 팀 프로젝트입니다. 메시지 패키지, 센서 처리, 경로 추종, 판단 로직을 한 워크스페이스에서 다룹니다.
+  status: Public
+  tags:
+    - ROS2
+    - ERP42
+    - C++
+    - Autonomous Driving
+- name: ACCA_2025
+  type: Autonomous Driving
+  repo: https://github.com/libok03/ACCA_2025
+  summary: ACCA 팀의 2025년 자율주행 코드베이스입니다. ERP42, MAVROS 메시지, NMEA 메시지 등 차량 주행에 필요한 ROS 패키지 구성을 포함합니다.
+  status: Public
+  tags:
+    - ROS2
+    - ERP42
+    - colcon
+    - Team Project
+- name: ros2_SimRealRobotControl
+  type: Robot Manipulation
+  repo: https://github.com/libok03/ros2_SimRealRobotControl
+  summary: UR5e와 Robotiq 2F-85 그리퍼를 Gazebo, RViz, MoveIt2로 연결해 pick-and-place 파이프라인을 실험한 ROS2 워크스페이스입니다.
+  status: Public
+  tags:
+    - ROS2
+    - UR5e
+    - MoveIt2
+    - Gazebo
+- name: HW-NAS-YOLO
+  type: Research
+  repo: https://github.com/libok03/HW-NAS-YOLO
+  summary: 자율주행 edge 환경에서 mAP와 latency의 Pareto 균형을 찾기 위한 hardware-aware NAS 파이프라인입니다.
+  status: Public
+  tags:
+    - YOLO
+    - NAS
+    - Ray
+    - TensorRT
+- name: PPO_SwingUp
+  type: Reinforcement Learning
+  repo: https://github.com/libok03/PPO_SwingUp
+  summary: PPO를 이용해 swing-up 제어 문제를 다룬 강화학습 실험입니다. 연속 제어, 로그 분석, 학습 안정성을 중심으로 정리했습니다.
+  status: Public
+  tags:
+    - PPO
+    - PyTorch
+    - Control
+    - TensorBoard
+- name: CartPole_RL
+  type: Reinforcement Learning
+  repo: https://github.com/libok03/CartPole_RL
+  summary: CartPole 환경에서 Q-Learning 기반 agent를 직접 구현하고 episode별 학습 성능을 비교한 기본 강화학습 프로젝트입니다.
+  status: Public
+  tags:
+    - Q-Learning
+    - Python
+    - Gym
+    - RL
+- name: Atari_DQN_Agent
+  type: Reinforcement Learning
+  repo: https://github.com/libok03/Atari_DQN_Agent
+  summary: Atari 환경을 대상으로 DQN 구조, replay buffer, target network, frame preprocessing을 실험한 deep RL 프로젝트입니다.
+  status: Public
+  tags:
+    - DQN
+    - PyTorch
+    - Atari
+    - Gym
+- name: irol-lab-website
+  type: Web
+  repo: https://github.com/libok03/irol-lab-website
+  summary: 연구실 웹사이트를 구성하며 페이지 구조와 배포 흐름을 다룬 웹 프로젝트입니다.
+  status: Public
+  tags:
+    - Website
+    - Frontend
+- name: dinner_project
+  type: Web/App
+  repo: https://github.com/libok03/dinner_project
+  summary: 식사 선택이나 모임 맥락에서 사용할 수 있는 작은 웹/앱 실험 프로젝트입니다.
+  status: Public
+  tags:
+    - App
+    - Prototype
+- name: waterpray
+  type: Prototype
+  repo: https://github.com/libok03/waterpray
+  summary: 간단한 아이디어 검증용 프로토타입 저장소입니다. 작은 단위로 실험하고 기록하는 흐름을 보여줍니다.
+  status: Public
+  tags:
+    - Prototype
+- name: ilbox
+  type: Private Project
+  repo: https://github.com/libok03/ilbox
+  summary: 비공개 저장소입니다. 공개 블로그에는 상세 코드 대신 프로젝트 진행 기록의 목차 수준으로만 남깁니다.
+  status: Private
+  tags:
+    - Private
+- name: ROS2_ws
+  type: Private Robotics Workspace
+  repo: https://github.com/libok03/ROS2_ws
+  summary: ROS2 학습과 실험을 모아둔 비공개 워크스페이스입니다. 공개 가능한 내용은 별도 개발일지로 정리합니다.
+  status: Private
+  tags:
+    - ROS2
+    - Private
+- name: backjoonmunjaepuli
+  type: Algorithm Practice
+  repo: https://github.com/libok03/backjoonmunjaepuli
+  summary: 백준 문제 풀이 기록을 모아둔 비공개 저장소입니다. 알고리즘 연습 흐름을 추후 공개 글로 요약할 수 있습니다.
+  status: Private
+  tags:
+    - Algorithm
+    - Practice
+- name: algorithms
+  type: Algorithm Practice
+  repo: https://github.com/libok03/algorithms
+  summary: 알고리즘 구현과 풀이 패턴을 정리한 비공개 저장소입니다.
+  status: Private
+  tags:
+    - Algorithm
+    - Private
+- name: french_learning_game
+  type: Learning Game
+  repo: https://github.com/libok03/french_learning_game
+  summary: 프랑스어 학습을 게임 형태로 실험한 비공개 프로젝트입니다.
+  status: Private
+  tags:
+    - Game
+    - Learning
+- name: libok03.github.io
+  type: Blog
+  repo: https://github.com/libok03/libok03.github.io
+  summary: 프로젝트와 시행착오를 정리하는 Jekyll 기반 기술 블로그입니다.
+  status: Public
+  tags:
+    - Jekyll
+    - Blog
+    - GitHub Pages

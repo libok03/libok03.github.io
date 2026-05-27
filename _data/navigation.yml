@@ -1,4 +1,6 @@
 main:
+  - title: "프로젝트"
+    url: /projects/
   - title: "개발일지"
     url: /dev/
   - title: "여행"
