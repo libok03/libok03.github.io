@@ -3,11 +3,9 @@ title: "개발일지"
 layout: archive
 permalink: /dev/
 author_profile: true
-sidebar:
-  nav: "docs"
 ---
 
-개발 관련 공부한 내용과 프로젝트 기록을 남기는 공간입니다.
+ROS2, 자율주행, 강화학습, 웹 프로젝트를 진행하며 남긴 기록입니다.
 
 <div class="entries-list">
   {% for post in site.posts %}

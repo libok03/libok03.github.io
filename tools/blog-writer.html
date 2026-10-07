@@ -1,0 +1,850 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>libok03 Blog Writer</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --panel: #ffffff;
+      --ink: #172338;
+      --muted: #657386;
+      --line: #dce4ee;
+      --accent: #2f6f73;
+      --accent-strong: #23585c;
+      --soft: #eef8f8;
+      --warn: #9b5c1d;
+      --shadow: 0 18px 45px rgba(24, 39, 63, 0.10);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background: var(--bg);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: minmax(360px, 0.9fr) minmax(360px, 1.1fr);
+      min-height: 100vh;
+    }
+
+    .editor,
+    .preview-shell {
+      padding: 22px;
+    }
+
+    .editor {
+      border-right: 1px solid var(--line);
+      background: #fbfdff;
+      overflow: auto;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.25rem;
+      letter-spacing: 0;
+    }
+
+    .subtle {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    .status {
+      padding: 7px 10px;
+      border: 1px solid #cfe1e2;
+      border-radius: 999px;
+      color: var(--accent-strong);
+      background: var(--soft);
+      font-size: 0.78rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      color: #2d3b4d;
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--ink);
+      background: var(--panel);
+      outline: none;
+    }
+
+    input,
+    select {
+      height: 42px;
+      padding: 0 11px;
+    }
+
+    textarea {
+      min-height: 47vh;
+      margin-top: 12px;
+      padding: 14px;
+      resize: vertical;
+      line-height: 1.6;
+      font-family: Consolas, "SFMono-Regular", ui-monospace, monospace;
+      font-size: 0.92rem;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(47, 111, 115, 0.12);
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 14px 0;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 38px;
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--ink);
+      background: var(--panel);
+      cursor: pointer;
+      font-size: 0.84rem;
+      font-weight: 800;
+    }
+
+    .btn:hover {
+      border-color: var(--accent);
+      color: var(--accent-strong);
+    }
+
+    .btn.primary {
+      border-color: var(--accent);
+      color: #fff;
+      background: var(--accent);
+    }
+
+    .btn.primary:hover {
+      background: var(--accent-strong);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .stat {
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.05rem;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 0.74rem;
+      font-weight: 800;
+    }
+
+    .filename {
+      margin-top: 12px;
+      padding: 10px;
+      border: 1px dashed #bdd1d2;
+      border-radius: 8px;
+      color: var(--accent-strong);
+      background: var(--soft);
+      font-family: Consolas, "SFMono-Regular", ui-monospace, monospace;
+      font-size: 0.83rem;
+      word-break: break-all;
+    }
+
+    .preview-shell {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 16px;
+      overflow: auto;
+    }
+
+    .preview-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .viewport-tabs {
+      display: flex;
+      gap: 8px;
+      padding: 5px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--panel);
+    }
+
+    .viewport-tabs button {
+      min-width: 88px;
+      height: 34px;
+      border: 0;
+      border-radius: 7px;
+      color: var(--muted);
+      background: transparent;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 800;
+    }
+
+    .viewport-tabs button.active {
+      color: #fff;
+      background: var(--accent);
+    }
+
+    .device-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: start;
+      min-height: 100%;
+      padding: 10px 0 32px;
+    }
+
+    .device {
+      width: min(100%, 920px);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      transition: width 0.18s ease;
+      overflow: hidden;
+    }
+
+    .device.phone {
+      width: 390px;
+    }
+
+    .device.laptop {
+      width: 760px;
+    }
+
+    .device.desktop {
+      width: min(100%, 980px);
+    }
+
+    .device-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      height: 34px;
+      padding: 0 12px;
+      border-bottom: 1px solid var(--line);
+      background: #f8fafc;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #cdd6e1;
+    }
+
+    .preview {
+      padding: 26px;
+      line-height: 1.75;
+      word-break: keep-all;
+      overflow-wrap: anywhere;
+    }
+
+    .preview h1 {
+      margin: 0 0 8px;
+      font-size: 2rem;
+      line-height: 1.18;
+    }
+
+    .preview h2 {
+      margin-top: 2rem;
+      padding-bottom: 0.3rem;
+      border-bottom: 1px solid var(--line);
+      font-size: 1.35rem;
+    }
+
+    .preview h3 {
+      margin-top: 1.5rem;
+      font-size: 1.08rem;
+    }
+
+    .preview p,
+    .preview li {
+      color: #2f3d4e;
+      font-size: 1rem;
+    }
+
+    .preview a {
+      color: var(--accent-strong);
+      font-weight: 800;
+    }
+
+    .preview pre {
+      padding: 14px;
+      border-radius: 8px;
+      overflow: auto;
+      color: #eaf2ff;
+      background: #172338;
+    }
+
+    .preview code {
+      padding: 0.1em 0.3em;
+      border-radius: 5px;
+      background: #eef2f6;
+    }
+
+    .preview pre code {
+      padding: 0;
+      background: transparent;
+    }
+
+    .preview blockquote {
+      margin: 1.2rem 0;
+      padding-left: 1rem;
+      border-left: 4px solid var(--accent);
+      color: var(--muted);
+    }
+
+    .preview img {
+      max-width: 100%;
+      border-radius: 8px;
+    }
+
+    .preview table {
+      display: block;
+      width: 100%;
+      overflow-x: auto;
+      border-collapse: collapse;
+    }
+
+    .preview th,
+    .preview td {
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+    }
+
+    .post-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 800;
+    }
+
+    .chip {
+      padding: 3px 8px;
+      border: 1px solid #d4e4e5;
+      border-radius: 999px;
+      color: var(--accent-strong);
+      background: var(--soft);
+    }
+
+    .notice {
+      margin-top: 12px;
+      color: var(--warn);
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    @media (max-width: 980px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .editor {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      textarea {
+        min-height: 36vh;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .editor,
+      .preview-shell {
+        padding: 14px;
+      }
+
+      .field-grid,
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .preview-top {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .viewport-tabs {
+        overflow-x: auto;
+      }
+
+      .device.phone,
+      .device.laptop,
+      .device.desktop {
+        width: 100%;
+      }
+
+      .preview {
+        padding: 18px;
+      }
+
+      .preview h1 {
+        font-size: 1.55rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="editor" aria-label="글쓰기 입력 영역">
+      <div class="topbar">
+        <div>
+          <h1>블로그 글쓰기</h1>
+          <p class="subtle">Markdown으로 쓰고 화면 크기별로 바로 확인합니다.</p>
+        </div>
+        <div id="saveStatus" class="status">자동 저장 켜짐</div>
+      </div>
+
+      <div class="field-grid">
+        <label class="full">제목
+          <input id="titleInput" type="text" placeholder="예: ROS2 localization 삽질 기록">
+        </label>
+        <label>카테고리
+          <select id="categoryInput">
+            <option value="Dev Log">Dev Log</option>
+            <option value="Trip">Trip</option>
+            <option value="Cafe-Food">Cafe-Food</option>
+          </select>
+        </label>
+        <label>날짜
+          <input id="dateInput" type="date">
+        </label>
+        <label class="full">태그
+          <input id="tagsInput" type="text" placeholder="ROS2, Gazebo, TroubleShooting">
+        </label>
+      </div>
+
+      <div class="toolbar" aria-label="편집 도구">
+        <button class="btn" type="button" data-insert="## 소제목&#10;&#10;">H2</button>
+        <button class="btn" type="button" data-wrap="**">굵게</button>
+        <button class="btn" type="button" data-wrap="`">코드</button>
+        <button class="btn" type="button" data-insert="- 항목&#10;">목록</button>
+        <button class="btn" type="button" data-insert="![이미지 설명](/assets/images/image.jpg)">이미지</button>
+        <button class="btn" type="button" data-insert="[링크 텍스트](https://example.com)">링크</button>
+      </div>
+
+      <textarea id="bodyInput" spellcheck="false"></textarea>
+
+      <div class="toolbar">
+        <button id="downloadBtn" class="btn primary" type="button">Markdown 다운로드</button>
+        <button id="copyBtn" class="btn" type="button">전체 복사</button>
+        <button id="resetBtn" class="btn" type="button">새 글</button>
+      </div>
+
+      <div id="filenameBox" class="filename"></div>
+
+      <div class="stats">
+        <div class="stat"><strong id="wordCount">0</strong><span>단어</span></div>
+        <div class="stat"><strong id="charCount">0</strong><span>글자</span></div>
+        <div class="stat"><strong id="readTime">1분</strong><span>예상 읽기</span></div>
+      </div>
+
+      <p class="notice">다운로드한 파일을 `_posts` 폴더에 넣고 커밋하면 블로그 글로 올라갑니다.</p>
+    </section>
+
+    <section class="preview-shell" aria-label="미리보기 영역">
+      <div class="preview-top">
+        <div>
+          <h1>미리보기</h1>
+          <p class="subtle">휴대폰, 노트북, 데스크톱 폭을 바꿔가며 확인합니다.</p>
+        </div>
+        <div class="viewport-tabs" role="tablist" aria-label="미리보기 화면 크기">
+          <button class="active" type="button" data-device="phone">휴대폰</button>
+          <button type="button" data-device="laptop">노트북</button>
+          <button type="button" data-device="desktop">데스크톱</button>
+        </div>
+      </div>
+
+      <div class="device-wrap">
+        <article id="device" class="device phone">
+          <div class="device-bar" aria-hidden="true">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>
+          <div id="preview" class="preview"></div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const titleInput = $("titleInput");
+    const categoryInput = $("categoryInput");
+    const dateInput = $("dateInput");
+    const tagsInput = $("tagsInput");
+    const bodyInput = $("bodyInput");
+    const preview = $("preview");
+    const filenameBox = $("filenameBox");
+    const saveStatus = $("saveStatus");
+    const storageKey = "libok03-blog-writer-draft";
+
+    const starter = `글을 시작한 이유를 적어보세요.
+
+## 오늘 다룬 것
+
+- 
+- 
+- 
+
+## 막혔던 부분
+
+
+## 해결한 방법
+
+
+## 다음에 볼 것
+
+`;
+
+    function todayString() {
+      const d = new Date();
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const dd = String(d.getDate()).padStart(2, "0");
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    function slugify(text) {
+      const base = text.trim().toLowerCase()
+        .replace(/[^\w\s가-힣-]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "");
+      return base || "new-post";
+    }
+
+    function escapeHtml(text) {
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function inlineMarkdown(text) {
+      let out = escapeHtml(text);
+      out = out.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1">');
+      out = out.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+      out = out.replace(/`([^`]+)`/g, '<code>$1</code>');
+      out = out.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+      out = out.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+      return out;
+    }
+
+    function renderMarkdown(md) {
+      const lines = md.replace(/\r\n/g, "\n").split("\n");
+      let html = "";
+      let inCode = false;
+      let code = [];
+      let inList = false;
+      let inTable = false;
+      let tableRows = [];
+
+      function closeList() {
+        if (inList) {
+          html += "</ul>";
+          inList = false;
+        }
+      }
+
+      function closeTable() {
+        if (!inTable) return;
+        html += "<table>";
+        tableRows.forEach((row, idx) => {
+          const cells = row.split("|").slice(1, -1).map((cell) => cell.trim());
+          if (idx === 1 && cells.every((cell) => /^:?-{3,}:?$/.test(cell))) return;
+          html += idx === 0 ? "<thead><tr>" : (idx === 2 ? "<tbody><tr>" : "<tr>");
+          cells.forEach((cell) => {
+            html += idx === 0 ? `<th>${inlineMarkdown(cell)}</th>` : `<td>${inlineMarkdown(cell)}</td>`;
+          });
+          html += idx === 0 ? "</tr></thead>" : "</tr>";
+        });
+        if (tableRows.length > 1) html += "</tbody>";
+        html += "</table>";
+        inTable = false;
+        tableRows = [];
+      }
+
+      for (const line of lines) {
+        if (line.startsWith("```")) {
+          closeList();
+          closeTable();
+          if (inCode) {
+            html += `<pre><code>${escapeHtml(code.join("\n"))}</code></pre>`;
+            code = [];
+            inCode = false;
+          } else {
+            inCode = true;
+          }
+          continue;
+        }
+
+        if (inCode) {
+          code.push(line);
+          continue;
+        }
+
+        if (/^\|.+\|$/.test(line.trim())) {
+          closeList();
+          inTable = true;
+          tableRows.push(line.trim());
+          continue;
+        }
+
+        closeTable();
+
+        if (!line.trim()) {
+          closeList();
+          continue;
+        }
+
+        if (line.startsWith("# ")) {
+          closeList();
+          html += `<h1>${inlineMarkdown(line.slice(2))}</h1>`;
+        } else if (line.startsWith("## ")) {
+          closeList();
+          html += `<h2>${inlineMarkdown(line.slice(3))}</h2>`;
+        } else if (line.startsWith("### ")) {
+          closeList();
+          html += `<h3>${inlineMarkdown(line.slice(4))}</h3>`;
+        } else if (line.startsWith("> ")) {
+          closeList();
+          html += `<blockquote>${inlineMarkdown(line.slice(2))}</blockquote>`;
+        } else if (/^- /.test(line)) {
+          if (!inList) {
+            html += "<ul>";
+            inList = true;
+          }
+          html += `<li>${inlineMarkdown(line.slice(2))}</li>`;
+        } else {
+          closeList();
+          html += `<p>${inlineMarkdown(line)}</p>`;
+        }
+      }
+
+      closeList();
+      closeTable();
+      if (inCode) html += `<pre><code>${escapeHtml(code.join("\n"))}</code></pre>`;
+      return html;
+    }
+
+    function tagsArray() {
+      return tagsInput.value.split(",").map((tag) => tag.trim()).filter(Boolean);
+    }
+
+    function frontMatter() {
+      const tags = tagsArray();
+      const tagLines = tags.length ? tags.map((tag) => `  - ${tag}`).join("\n") : "  - Memo";
+      return `---\ntitle: "${titleInput.value.trim() || "새 글"}"\ndate: ${dateInput.value || todayString()} 09:00:00 +0900\nlayout: single\ncategories:\n  - ${categoryInput.value}\ntags:\n${tagLines}\n---\n\n`;
+    }
+
+    function markdownFile() {
+      return frontMatter() + bodyInput.value.trim() + "\n";
+    }
+
+    function filename() {
+      return `${dateInput.value || todayString()}-${slugify(titleInput.value)}.md`;
+    }
+
+    function saveDraft() {
+      const data = {
+        title: titleInput.value,
+        category: categoryInput.value,
+        date: dateInput.value,
+        tags: tagsInput.value,
+        body: bodyInput.value
+      };
+      localStorage.setItem(storageKey, JSON.stringify(data));
+      saveStatus.textContent = "자동 저장됨";
+      setTimeout(() => { saveStatus.textContent = "자동 저장 켜짐"; }, 900);
+    }
+
+    function loadDraft() {
+      const raw = localStorage.getItem(storageKey);
+      if (!raw) {
+        dateInput.value = todayString();
+        titleInput.value = "새 개발일지";
+        tagsInput.value = "ROS2, Project";
+        bodyInput.value = starter;
+        return;
+      }
+
+      try {
+        const data = JSON.parse(raw);
+        titleInput.value = data.title || "새 개발일지";
+        categoryInput.value = data.category || "Dev Log";
+        dateInput.value = data.date || todayString();
+        tagsInput.value = data.tags || "";
+        bodyInput.value = data.body || starter;
+      } catch {
+        dateInput.value = todayString();
+        bodyInput.value = starter;
+      }
+    }
+
+    function update() {
+      const tags = tagsArray();
+      const words = bodyInput.value.trim().split(/\s+/).filter(Boolean).length;
+      const chars = bodyInput.value.replace(/\s/g, "").length;
+      const minutes = Math.max(1, Math.ceil(words / 250));
+      filenameBox.textContent = filename();
+      $("wordCount").textContent = words.toLocaleString();
+      $("charCount").textContent = chars.toLocaleString();
+      $("readTime").textContent = `${minutes}분`;
+
+      preview.innerHTML = `
+        <h1>${escapeHtml(titleInput.value.trim() || "새 글")}</h1>
+        <div class="post-meta">
+          <span>${escapeHtml(dateInput.value || todayString())}</span>
+          <span class="chip">${escapeHtml(categoryInput.value)}</span>
+          ${tags.map((tag) => `<span class="chip">${escapeHtml(tag)}</span>`).join("")}
+        </div>
+        ${renderMarkdown(bodyInput.value)}
+      `;
+      saveDraft();
+    }
+
+    function insertAtCursor(text) {
+      const start = bodyInput.selectionStart;
+      const end = bodyInput.selectionEnd;
+      bodyInput.value = bodyInput.value.slice(0, start) + text + bodyInput.value.slice(end);
+      bodyInput.focus();
+      bodyInput.selectionStart = bodyInput.selectionEnd = start + text.length;
+      update();
+    }
+
+    function wrapSelection(token) {
+      const start = bodyInput.selectionStart;
+      const end = bodyInput.selectionEnd;
+      const selected = bodyInput.value.slice(start, end) || "텍스트";
+      bodyInput.value = bodyInput.value.slice(0, start) + token + selected + token + bodyInput.value.slice(end);
+      bodyInput.focus();
+      bodyInput.selectionStart = start + token.length;
+      bodyInput.selectionEnd = start + token.length + selected.length;
+      update();
+    }
+
+    document.querySelectorAll("[data-insert]").forEach((button) => {
+      button.addEventListener("click", () => insertAtCursor(button.dataset.insert));
+    });
+
+    document.querySelectorAll("[data-wrap]").forEach((button) => {
+      button.addEventListener("click", () => wrapSelection(button.dataset.wrap));
+    });
+
+    document.querySelectorAll(".viewport-tabs button").forEach((button) => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll(".viewport-tabs button").forEach((item) => item.classList.remove("active"));
+        button.classList.add("active");
+        $("device").className = `device ${button.dataset.device}`;
+      });
+    });
+
+    [titleInput, categoryInput, dateInput, tagsInput, bodyInput].forEach((el) => {
+      el.addEventListener("input", update);
+      el.addEventListener("change", update);
+    });
+
+    $("downloadBtn").addEventListener("click", () => {
+      const blob = new Blob([markdownFile()], { type: "text/markdown;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename();
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    $("copyBtn").addEventListener("click", async () => {
+      await navigator.clipboard.writeText(markdownFile());
+      saveStatus.textContent = "복사 완료";
+      setTimeout(() => { saveStatus.textContent = "자동 저장 켜짐"; }, 900);
+    });
+
+    $("resetBtn").addEventListener("click", () => {
+      if (!confirm("현재 작성 중인 내용을 지우고 새 글을 시작할까요?")) return;
+      localStorage.removeItem(storageKey);
+      titleInput.value = "새 개발일지";
+      categoryInput.value = "Dev Log";
+      dateInput.value = todayString();
+      tagsInput.value = "ROS2, Project";
+      bodyInput.value = starter;
+      update();
+    });
+
+    loadDraft();
+    update();
+  </script>
+</body>
+</html>

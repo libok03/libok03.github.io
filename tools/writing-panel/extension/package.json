@@ -1,0 +1,31 @@
+{
+  "name": "paper-writing-panel",
+  "displayName": "논문 블로그 집필 패널",
+  "description": "저장, 미리보기, 이미지 삽입, 새 리뷰, GitHub Pages 배포 버튼",
+  "version": "0.1.1",
+  "publisher": "libok03",
+  "engines": {"vscode": "^1.90.0"},
+  "categories": ["Other"],
+  "main": "./extension.js",
+  "activationEvents": ["workspaceContains:_quarto.yml", "workspaceContains:libok03.github.io/_quarto.yml"],
+  "capabilities": {"untrustedWorkspaces": {"supported": false}},
+  "contributes": {
+    "commands": [
+      {"command": "paperBlog.open", "title": "블로그: 집필 패널 열기", "icon": "$(notebook)"},
+      {"command": "paperBlog.save", "title": "블로그: 모두 저장", "icon": "$(save-all)"},
+      {"command": "paperBlog.preview", "title": "블로그: 독자 화면 미리보기", "icon": "$(open-preview)"},
+      {"command": "paperBlog.new", "title": "블로그: 새 논문 리뷰", "icon": "$(new-file)"},
+      {"command": "paperBlog.publish", "title": "블로그: 저장하고 배포", "icon": "$(cloud-upload)"}
+    ],
+    "viewsContainers": {"activitybar": [{"id": "paperBlog", "title": "논문 블로그", "icon": "media/book.svg"}]},
+    "views": {"paperBlog": [{"type": "webview", "id": "paperBlog.controls", "name": "집필 버튼"}]},
+    "menus": {
+      "editor/title": [
+        {"command": "paperBlog.save", "when": "resourceExtname == .qmd", "group": "navigation@1"},
+        {"command": "paperBlog.preview", "when": "resourceExtname == .qmd", "group": "navigation@2"},
+        {"command": "paperBlog.publish", "when": "resourceExtname == .qmd", "group": "navigation@3"},
+        {"command": "paperBlog.open", "when": "resourceExtname == .qmd", "group": "navigation@4"}
+      ]
+    }
+  }
+}

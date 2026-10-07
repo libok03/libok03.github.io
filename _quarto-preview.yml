@@ -1,0 +1,5 @@
+project:
+  output-dir: _preview
+website:
+  draft-mode: visible
+

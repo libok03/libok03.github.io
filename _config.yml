@@ -14,9 +14,9 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 title: libok03's Blog
-email: libok03@users.noreply.github.com
+email: markpiano01@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
-  개발 기록, 여행 후기, 맛집/카페 탐방을 남기는 개인 블로그입니다.
+  ROS2, autonomous driving, reinforcement learning, and daily project notes.
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://libok03.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 github_username:  libok03
@@ -48,7 +48,7 @@ timezone: "Asia/Seoul"
 author:
   name   : "libok03"
   avatar : "/assets/images/bio-photo.jpg"
-  bio    : "Developer & Tech Enthusiast"
+  bio    : "Robotics, autonomous driving, and reinforcement learning"
   links:
     - label: "GitHub"
       icon: "fab fa-fw fa-github"

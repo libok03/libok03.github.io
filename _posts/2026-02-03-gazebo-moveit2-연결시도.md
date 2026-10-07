@@ -1,59 +1,25 @@
 ---
-title: "UR5e + Robotiq MoveIt2 연동 삽질... 4시간 날리고 깨달은 점"
+title: "UR5e + Robotiq MoveIt2 연결 시도: 4시간 삽질 기록"
 date: 2026-02-03 17:00:00 +0900
 layout: single
-categories: 
+categories:
   - Dev Log
 tags:
   - ROS2
   - MoveIt2
   - Gazebo
   - UR5e
-  - 트러블슈팅
+  - Robotiq
 ---
 
-오늘은 진짜 역대급 삽질을 했다. Gazebo랑 MoveIt2 연결해서 Rviz2에 띄우려고 시작했는데, 4시간 동안 화면만 쳐다보다 끝날 줄이야... 
+Gazebo에서 UR5e와 Robotiq 그리퍼를 띄우고 MoveIt2와 연결하려고 했던 첫 시행착오 기록입니다. URDF, SRDF, controller, RViz 설정이 서로 맞아야 해서 생각보다 오래 걸렸습니다.
 
-## 1. 시작은 창대했으나... (URDF, SRDF 준비)
+## 막혔던 지점
 
-Gazebo에 로봇 띄우려면 **URDF**가 필요하고, MoveIt에 연결하려면 **SRDF**가 필수라고 해서 작업을 시작했다. 로봇은 국룰 조합인 **UR5e**에 **Robotiq** 앤드 이펙터다. 
+- Gazebo에는 모델이 보이지만 MoveIt2 planning scene과 연결이 어색함
+- URDF와 SRDF 설정이 서로 맞지 않아 충돌 설정을 계속 확인해야 함
+- Robotiq gripper 모델과 controller 연결 흐름이 명확하지 않음
 
-원래는 `MoveIt Setup Assistant` 켜서 클릭 몇 번 하면 SRDF가 뚝딱 나와야 하는데, 내 컴퓨터 사양이 진짜... 똥컴이라 그런지 실행조차 안 된다. 결국 포기하고 그냥 되는대로 잼민이한테 SRDF 만들어달라고 던져줬더니 뭔가를 주긴 해서 이거 쓸 예정이다.
+## 배운 점
 
-## 2. [ERROR] Unexpected type for parameter value None
-
-그렇게 만든 URDF랑 SRDF를 한 패키지에 넣고 예제 코드 살짝 변형해서 띄우려는데 바로 에러가 터졌다.
-
-> `[ERROR] [launch]: Caught exception in launch: Unexpected type for parameter value None`
-
-뭐가 문젠지 찾아봤는데, 알수 없는 곳에서 값을 받아야하는데 None이 들어와서 그렇다고 한다.
-해결 방법도 딱히 없단다. 
-![왜 안되는데..](/assets/images/스크린샷 2026-02-03 17-12-01.png)
-![왜 안되냐고...](/assets/images/스크린샷 2026-02-03 17-12-27.png)
-![gazebo 에러](/assets/images/스크린샷 2026-02-03 17-16-33.png)
-### 데이터 흐름 분석 (왜 None이 떴을까?)
-1. **Input**: Launch 파일이 `xacro` 명령어를 실행해서 로봇 모델을 불러옴.
-2. **Logic**: `robot_description` 변수에 파일 내용을 담아야 하는데, 경로가 꼬였거나 파일이 비어있어서 **None** 값이 전달됨.
-3. **Output**: 파라미터에 `None`이 들어가니까 로드 노드가 뻗어버림.
-
-처음엔 이상한 곳에서 XML파일이 존재한다고 해서 주변 XML 파일을 다 없애고 (사실 이 디렉토리 바로 위에 블로그 디렉토리가 존재한다.) 이거 말고도  yaml파일이 비어있다고 해서 여기도 다시 한번 다 정리했다.
-이래도 문제가 안 고쳐져서 결국 런치파일을 하나하나 다 디벼보면서 다시 만드니까 고쳐지기는 했다.
-근데 문제는 또 생긴다.
-
-## 3. Gazebo는 왜 안 켜지는데?
-
-SRDF 연결 성공하자마자 이번엔 Gazebo가 안 켜진다. 한 6시간 만졌나? 진짜 화나서 모니터 부술 뻔했다. 
-ㅠㅠㅠㅠㅠ 이정도 되면 다시 처음부터 다시 만드는게 더 싸게 먹힐거 같다...
-
-현업 용어로 따지면 이건 **Controller Manager랑 하드웨어 인터페이스 간의 핸드셰이킹 실패**란다. 
-- **데이터 흐름**: `MoveIt (Command)` -> `Controller Manager` -> `Gazebo Plugin`.
-- Gazebo가 로드될 때 `ros2_control` 플러그인이 로봇 관절 데이터를 제대로 못 긁어오니까 전체 프로세스가 데드락(Deadlock)에 걸린 상태인 것 같다. ROS2 만들때 잘좀 만들지 왜 이렇게 만들었을까 ㅠㅠㅠㅠ
-
-어떻게 잼민이랑 백문백답을 진행했는데 얻은 결론은 처음 부터 다시 만들기다.
-지금까지 쓴 시간이 너무 아쉽지만 어쩔수 없다. 이렇게 스파게티로 쑤셔놓은 코드는 밥도 안될거고 만약 원하는 기능을 구현한다 하더라도 나중에 보면 이상한 곳에서 에러가 분명히 생길 것이다.
-
-## 4. 결론 및 저장
-
-오늘의 교훈: 툴이 안 되면 노가다라도 해야 하는데, 그 노가다도 데이터 흐름을 모르면 답이 없다. 4시간 삽질하고 아직 Gazebo는 못 띄웠지만, 일단 런치 파일이랑 SRDF 구조는 마스터했으니 내일은 무조건 띄운다.
-
-ㅠㅠ 연구실 일도 해야하는데 며칠째 이걸로 고생하는지 모르겠다. 언젠간 URDF, Gazebo 마스터하고 다음 단계로 나갔으면 좋겠다.
+로봇 시뮬레이션은 하나의 파일만 고쳐서 해결되는 경우가 거의 없었습니다. 모델, joint, controller, launch, planning scene을 한 번에 보는 습관이 필요했습니다.
