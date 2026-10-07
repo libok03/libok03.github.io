@@ -6,6 +6,12 @@ project:
     - about.qmd
     - posts/**/index.qmd
   resources:
+    - assets/comments-config.json
+    - styles/paper-comments.js
+    - "!services/**"
+    - "!.tools/**"
+    - "!.venv/**"
+    - "!node_modules/**"
     - assets/research/**
     - "!templates/**"
     - "!notes/**"

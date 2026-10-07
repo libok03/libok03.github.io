@@ -1,5 +1,10 @@
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+  if (document.body.classList.contains('paper-article')) {
+    const stylesheet = document.querySelector('link[href*="styles/research.css"]');
+    if (stylesheet) import(new URL('paper-comments.js', stylesheet.href).href)
+      .then(module => module.mountComments()).catch(() => {});
+  }
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (!reduceMotion && 'IntersectionObserver' in window) {
     const observer = new IntersectionObserver(entries => {

@@ -88,6 +88,9 @@ figcaption{font-size:.73rem;color:var(--paper-muted);line-height:1.7}
 @media(prefers-reduced-motion:reduce){.paper-card,.paper-card-cover img{transition:none}.paper-card:hover{transform:none}}
 
 /* CSS Design Awards inspired editorial collection. */
+.paper-comments{margin-top:4rem;padding-top:2rem;border-top:1px solid var(--paper-rule);--waline-theme-color:var(--paper-accent);--waline-active-color:var(--paper-accent);--waline-bg-color:var(--paper-surface);--waline-bg-color-light:var(--paper-bg);--waline-border-color:var(--paper-rule);--waline-color:var(--paper-text);--waline-font-size:.88rem;--waline-border-radius:4px;}
+.paper-comments .research-eyebrow{margin-bottom:.75rem;}
+.paper-comments .comments-description,.comments-preview-note,.comments-status{font-size:.78rem;color:var(--paper-muted);line-height:1.8;}
 .paper-home main.content{max-width:1240px;}
 .awards-hero{display:block;padding:2.2rem 0 2.7rem;}
 .hero-rail{display:flex;justify-content:space-between;gap:1rem;font-family:var(--bs-font-monospace);font-size:.6rem;letter-spacing:.06em;color:var(--paper-muted);margin-bottom:1.8rem;}
