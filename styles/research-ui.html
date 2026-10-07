@@ -1,0 +1,49 @@
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduceMotion && 'IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer.unobserve(entry.target); } });
+    }, {threshold: .07});
+    document.querySelectorAll('.paper-card,.reading-principles').forEach(element => { element.classList.add('will-reveal'); observer.observe(element); });
+  }
+  const art = document.querySelector('.awards-hero .hero-art');
+  if (art && !reduceMotion && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    art.addEventListener('pointermove', event => {
+      const box = art.getBoundingClientRect();
+      const x = (event.clientX - box.left) / box.width - .5;
+      const y = (event.clientY - box.top) / box.height - .5;
+      art.style.transform = `perspective(900px) rotateX(${-y * 5}deg) rotateY(${x * 7}deg) rotateZ(-2deg)`;
+    });
+    art.addEventListener('pointerleave', () => { art.style.transform = ''; });
+  }
+  const search = document.getElementById('paper-search');
+  if (search) search.addEventListener('input', () => {
+    const terms = search.value.toLowerCase().trim().split(/\s+/).filter(Boolean);
+    let visible = 0;
+    document.querySelectorAll('.paper-card').forEach(card => {
+      card.hidden = !terms.every(term => (card.dataset.search || '').includes(term));
+      if (!card.hidden) visible++;
+    });
+    const empty = document.getElementById('paper-search-empty');
+    if (empty) empty.hidden = visible > 0 || !terms.length;
+  });
+  if (document.body.classList.contains('paper-article')) {
+    const progress = document.createElement('div'); progress.className = 'reading-progress'; progress.setAttribute('aria-hidden', 'true');
+    const bar = document.createElement('span'); progress.append(bar); document.body.append(progress);
+    const updateProgress = () => { const max = document.documentElement.scrollHeight - innerHeight; bar.style.width = (max > 0 ? Math.min(100, scrollY / max * 100) : 0) + '%'; };
+    addEventListener('scroll', updateProgress, {passive: true}); updateProgress();
+    const header = document.getElementById('title-block-header');
+    if (header) {
+      const trail = document.createElement('div'); trail.className = 'article-eyebrow';
+      const link = document.createElement('a'); link.href = '../../index.html'; link.textContent = 'PAPER NOTES';
+      trail.append(link, document.createTextNode(' / READING THE INTERNALS')); header.prepend(trail);
+    }
+    document.querySelectorAll('h2').forEach(heading => {
+      if (heading.textContent.includes('논문과 구현 정보')) {
+        const table = heading.parentElement?.querySelector('table'); if (table) table.classList.add('paper-facts');
+      }
+    });
+  }
+});
+</script>

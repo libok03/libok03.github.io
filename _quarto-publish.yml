@@ -1,0 +1,5 @@
+project:
+  output-dir: _publish
+website:
+  draft-mode: gone
+
