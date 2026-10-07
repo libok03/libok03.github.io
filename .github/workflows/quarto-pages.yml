@@ -1,5 +1,7 @@
 name: Publish Quarto blog
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
@@ -16,7 +18,7 @@ jobs:
           version: '1.10.18'
       - run: quarto render --profile publish
       - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: _publish
   deploy:
