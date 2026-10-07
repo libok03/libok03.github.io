@@ -1,0 +1,71 @@
+project:
+  type: website
+  output-dir: _site
+  render:
+    - index.qmd
+    - about.qmd
+    - posts/**/index.qmd
+  resources:
+    - assets/research/**
+    - "!templates/**"
+    - "!notes/**"
+    - "!papers/**"
+    - "!tools/**"
+    - "!_posts/**"
+    - "!_pages/**"
+    - "!README.md"
+  preview:
+    host: 127.0.0.1
+    port: 4200
+    browser: true
+
+website:
+  title: "libok03 / research notes"
+  site-url: https://libok03.github.io
+  description: "논문의 아이디어를 코드와 내부 로직으로 이해하는 연구 기록"
+  favicon: assets/research/mark.svg
+  draft-mode: gone
+  search:
+    location: navbar
+    type: overlay
+  navbar:
+    logo: assets/research/mark.svg
+    background: light
+    left:
+      - text: "논문 아카이브"
+        href: index.qmd
+      - text: "리뷰 노트에 대하여"
+        href: about.qmd
+    right:
+      - icon: github
+        href: https://github.com/libok03
+        aria-label: GitHub
+  page-footer:
+    left: "© libok03 · Paper Notes"
+    right: "논문을 읽고, 로직을 따라가고, 근거를 기록합니다."
+  back-to-top-navigation: true
+
+lang: ko
+format:
+  html:
+    theme:
+      light: [flatly, styles/custom.scss]
+      dark: [darkly, styles/custom.scss]
+    toc: true
+    toc-title: "CONTENTS / 이 글의 흐름"
+    toc-depth: 3
+    number-sections: false
+    code-copy: true
+    code-overflow: scroll
+    highlight-style: github
+    html-math-method: mathjax
+    lightbox: true
+    link-external-newwindow: true
+    smooth-scroll: true
+    include-after-body: styles/research-ui.html
+    css: styles/research.css
+    grid:
+      body-width: 820px
+      margin-width: 230px
+execute:
+  enabled: false

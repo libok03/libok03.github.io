@@ -1,0 +1,90 @@
+---
+title: "논문 리뷰 집필 연습장asdf"
+description: "수식, 텐서 shape, 코드, 데이터 흐름과 인용이 독자에게 어떻게 보이는지 확인합니다."
+date: "2026-10-04"
+categories: [작성 연습, 내부 로직]
+draft: true
+bibliography: references.bib
+image: ../../assets/research/attention-cover.svg
+paper-title: "Attention Is All You Need"
+paper-venue: "NeurIPS 2017"
+paper-url: "https://arxiv.org/abs/1706.03762"
+---
+
+이 문서는 미리보기용 연습장입니다. 문장을 수정하고 저장하면 옆의 화면도 갱신됩니다.
+실제 리뷰를 쓰기 전에 수식·코드·도식의 표시 방식을 확인해 보세요.
+
+문장을 고쳐 저장한 뒤, 미리보기에서 같은 문장이 바뀌었는지 확인하면 됩니다.
+
+## 문제 정의와 입력·출력
+
+내부 로직은 **어떤 정보가 들어와서 어떤 형태로 바뀌는지**를 중심으로 설명합니다.
+아래는 scaled dot-product attention을 예시로 든 것입니다 [@vaswani2017].
+
+| 표현 | Shape | 의미 |
+|---|---|---|
+| $X$ | $B \times N \times D$ | 입력 토큰 특징 |
+| $Q, K$ | $B \times N \times d_k$ | 비교에 사용하는 표현 |
+| $V$ | $B \times N \times d_v$ | 집계할 정보 |
+| $Y$ | $B \times N \times d_v$ | 문맥을 반영한 출력 |
+
+## 데이터가 흐르는 순서
+
+```{mermaid}
+flowchart LR
+    X[입력 X] --> P[선형 투영]
+    P --> Q[Query]
+    P --> K[Key]
+    P --> V[Value]
+    Q --> S[유사도 계산]
+    K --> S
+    S --> A[Scale + Softmax]
+    A --> Y[가중합]
+    V --> Y
+```
+
+투영 → 유사도 계산 → 정규화 → 정보 집계 순서입니다.
+각 화살표에 대응하는 연산을 수식과 코드에서 찾아보면 구현이 더 명확해집니다.
+
+## 핵심 수식
+
+$$
+Y = \operatorname{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)V
+$$ {#eq-attention}
+
+@eq-attention 에서 $QK^\top$는 토큰 쌍의 유사도입니다.
+Softmax는 마지막 축, 즉 각 query가 참고할 key들에 대해 적용됩니다.
+마지막으로 이 가중치와 $V$를 곱해 출력 특징을 얻습니다.
+
+## 코드로 따라가기
+
+```python
+import math
+import torch
+
+def attention(q, k, v):
+    # q, k: [B, N, d_k], v: [B, N, d_v]
+    scores = q @ k.transpose(-2, -1)
+    weights = torch.softmax(scores / math.sqrt(q.shape[-1]), dim=-1)
+    return weights @ v
+```
+
+이 예시는 mask와 dropout을 생략한 기본 연산입니다.
+코드 블록은 표시만 하므로 미리보기에 PyTorch 설치나 코드 실행이 필요하지 않습니다.
+
+::: {.callout-note title="근거와 해석을 구분하기"}
+논문의 설명에는 섹션·수식·그림 번호를, 코드 분석에는 파일 경로와 commit을 붙여 둡니다.
+직접 추정한 내용에는 “해석” 또는 “추정”이라고 표시합니다.
+:::
+
+## 구현할 때 확인할 점
+
+- `softmax`의 축과 행렬 곱의 순서
+- padding 또는 causal mask의 적용 위치
+- 배치·head 축의 reshape와 transpose
+- 논문 수식과 공개 코드의 차이
+
+## 참고문헌
+
+::: {#refs}
+:::
