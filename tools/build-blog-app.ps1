@@ -1,12 +1,19 @@
+param([ValidatePattern('^[a-z0-9-]+$')][string]$Channel = 'fast-preview')
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
 $pythonExe = Join-Path $projectRoot '.tools/app-env/Scripts/python.exe'
 if (-not (Test-Path -LiteralPath $pythonExe)) { throw 'App build environment is missing.' }
-$appOutput = [IO.Path]::GetFullPath((Join-Path $projectRoot '.tools/apps/current'))
+$appOutput = [IO.Path]::GetFullPath((Join-Path $projectRoot ".tools/apps/$Channel"))
 if (-not $appOutput.StartsWith($projectRoot + '\.tools\apps\', [StringComparison]::OrdinalIgnoreCase)) { throw 'Invalid app output path.' }
 & $pythonExe -m PyInstaller --noconfirm --onedir --windowed --name PaperBlog --distpath $appOutput --workpath "$projectRoot/.tools/app-build" --specpath "$projectRoot/.tools" --add-data "$PSScriptRoot/blog-app/ui;ui" --collect-all webview --hidden-import yaml "$PSScriptRoot/blog-app/app.py"
 if ($LASTEXITCODE -ne 0) { throw 'App build failed.' }
 $appExe = Join-Path $appOutput 'PaperBlog/PaperBlog.exe'
+$verifiedPath = Join-Path $appOutput 'PaperBlog/.verified'
+if ($Channel -eq 'fast-preview' -and -not (Test-Path -LiteralPath $verifiedPath)) {
+  Write-Host "App built: $appExe"
+  Write-Host 'Runtime verification is required before updating the desktop shortcut.'
+  exit 0
+}
 $shortcutName = -join @([char]0xB17C, [char]0xBB38, ' ', [char]0xBE14, [char]0xB85C, [char]0xADF8, '.lnk')
 $shortcutPath = Join-Path ([Environment]::GetFolderPath('Desktop')) $shortcutName
 $shortcutShell = New-Object -ComObject WScript.Shell

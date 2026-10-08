@@ -1,5 +1,9 @@
 @echo off
 cd /d "%~dp0"
+if exist "%~dp0.tools\apps\fast-preview\PaperBlog\.verified" (
+  start "" "%~dp0.tools\apps\fast-preview\PaperBlog\PaperBlog.exe" --project "%~dp0."
+  exit /b 0
+)
 if not exist "%~dp0.tools\apps\current\PaperBlog\PaperBlog.exe" (
   echo Please build the blog app first.
   pause

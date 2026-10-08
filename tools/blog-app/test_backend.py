@@ -67,4 +67,30 @@ class WorkspaceTests(unittest.TestCase):
     def test_unknown_job_is_rejected(self):
         with self.assertRaises(ValueError): self.w.start('shell','test-review')
 
+    def test_preview_project_renders_only_active_article(self):
+        stage = self.w.prepare_preview_project('test-review')
+        import yaml
+        config = yaml.safe_load((stage / '_quarto.yml').read_text(encoding='utf-8'))
+        self.assertEqual(config['project']['render'], ['posts/test-review/index.qmd'])
+        self.assertEqual(config['project']['output-dir'], '_rendered')
+        self.assertFalse((stage / '.tools').exists())
+        self.assertEqual((stage / 'posts/test-review/index.qmd').read_text(encoding='utf-8'), SOURCE)
+
+    def test_cached_preview_does_not_start_renderer(self):
+        output = self.root / '_preview/posts/test-review/index.html'
+        output.parent.mkdir(parents=True)
+        output.write_text('<html></html>')
+        fingerprint, _ = self.w.preview_signature('test-review')
+        self.w.preview_cache['test-review'] = fingerprint
+        with patch.object(self.w, 'run') as run:
+            self.assertEqual(self.w.render_preview('test-review'), digest(SOURCE))
+            run.assert_not_called()
+
+    def test_older_worker_cannot_clear_newer_job(self):
+        self.w.job_sequence = 2
+        self.w.job['busy'] = True
+        with patch.object(self.w,'tools',side_effect=RuntimeError('old task failed')):
+            self.w._worker('login','',1)
+        self.assertTrue(self.w.job['busy'])
+
 if __name__ == '__main__': unittest.main()

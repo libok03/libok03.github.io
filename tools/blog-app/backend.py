@@ -64,6 +64,9 @@ class Workspace:
         self.pending_preview = None
         self.logs = []
         self.last_run = ''
+        self.preview_cache = {}
+        self.job['previewEngine'] = 'isolated'
+        self.job_sequence = 0
 
     def path(self, slug, mode='article'):
         if not isinstance(slug, str) or not re.fullmatch(r'[a-z0-9]+(?:-[a-z0-9]+)*', slug):
@@ -164,12 +167,12 @@ class Workspace:
                            creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0))
         return {'message': '중지 요청을 보냈습니다. 이미 업로드한 내용은 유지됩니다.'}
 
-    def run(self, exe, args, timeout=120, allow_failure=False, device_login=False):
+    def run(self, exe, args, timeout=120, allow_failure=False, device_login=False, cwd=None):
         if self.cancel.is_set():
             raise RuntimeError('작업을 중지했습니다.')
         command = [str(exe), *map(str, args)]
         self.log('> ' + Path(str(exe)).name + ' ' + ' '.join(map(str, args)))
-        process = subprocess.Popen(command, cwd=self.root, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+        process = subprocess.Popen(command, cwd=cwd or self.root, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                                    stdin=subprocess.PIPE if device_login else subprocess.DEVNULL,
                                    text=True, encoding='utf-8', errors='replace',
                                    env={**os.environ, 'GH_PROMPT_DISABLED': '1', 'GIT_TERMINAL_PROMPT': '0', 'GCM_INTERACTIVE': 'Never'},
@@ -214,7 +217,7 @@ class Workspace:
                 self.progress('집필 도구 준비 중')
                 self.run('powershell.exe', ['-NoProfile', '-ExecutionPolicy', 'Bypass', '-File', str(self.root / 'tools' / script)], timeout=300)
 
-    def start(self, kind, slug=''):
+    def start(self, kind, slug='', archive=False):
         if kind not in {'preview', 'publish', 'login'}:
             raise ValueError('지원하지 않는 작업입니다.')
         if kind != 'login':
@@ -222,17 +225,76 @@ class Workspace:
         with self.job_lock:
             if self.job['busy']:
                 if kind == 'preview' and self.job['kind'] == 'preview':
-                    self.pending_preview = slug
+                    self.pending_preview = (slug, archive)
                     return {'queued': True}
                 raise ValueError('현재 작업이 끝난 뒤 실행하세요.')
             self.cancel.clear()
+            self.job_sequence += 1
+            sequence = self.job_sequence
             self.job.update(busy=True, kind=kind, message='작업 준비 중', error=False, code='')
-        threading.Thread(target=self._worker, args=(kind, slug), daemon=True).start()
+        threading.Thread(target=self._worker, args=(kind, slug, sequence, archive), daemon=True).start()
         return {'started': True}
 
-    def _worker(self, kind, slug):
+    def preview_signature(self, slug):
+        files = [self.path(slug), self.root / '_quarto.yml', self.root / '_quarto-preview.yml', self.root / 'posts/_metadata.yml']
+        for directory in [self.path(slug).parent, self.root / 'styles', self.root / 'assets']:
+            if directory.exists():
+                files.extend(file for file in directory.rglob('*') if file.is_file() and not any(part in PRIVATE for part in file.relative_to(self.root).parts))
+        entries = [(str(file.relative_to(self.root)), file.stat().st_mtime_ns, file.stat().st_size) for file in sorted(set(files)) if file.exists()]
+        return digest(json.dumps(entries)), max((entry[1] for entry in entries), default=0)
+
+    def prepare_preview_project(self, slug):
+        stage = self.root / '.tools/preview-project'
+        stage.mkdir(parents=True, exist_ok=True)
+        def copy_changed(source, destination):
+            if not source.exists(): return
+            if source.is_dir():
+                for file in source.rglob('*'):
+                    if file.is_file() and not any(part in PRIVATE for part in file.relative_to(source).parts):
+                        copy_changed(file, destination / file.relative_to(source))
+            elif not destination.exists() or source.stat().st_mtime_ns != destination.stat().st_mtime_ns or source.stat().st_size != destination.stat().st_size:
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(source, destination)
+        for name in ['styles', 'assets', 'index.qmd', 'about.qmd', 'posts/_metadata.yml']:
+            copy_changed(self.root / name, stage / name)
+        copy_changed(self.path(slug).parent, stage / 'posts' / slug)
+        config = yaml.safe_load((self.root / '_quarto.yml').read_text(encoding='utf-8'))
+        config['project']['render'] = [f'posts/{slug}/index.qmd']
+        config['project']['output-dir'] = '_rendered'
+        config.setdefault('website', {})['draft-mode'] = 'visible'
+        config.pop('profile', None)
+        (stage / '_quarto.yml').write_text(yaml.safe_dump(config, allow_unicode=True, sort_keys=False), encoding='utf-8')
+        (stage / '_quarto-preview.yml').write_text('project:\n  output-dir: _rendered\nwebsite:\n  draft-mode: visible\n', encoding='utf-8')
+        return stage
+
+    def render_preview(self, slug, archive=False):
+        source = self.read(slug)['text']
+        fingerprint, newest = self.preview_signature(slug)
+        output = self.root / '_preview/posts' / slug / 'index.html'
+        if not archive and output.exists() and (self.preview_cache.get(slug) == fingerprint or output.stat().st_mtime_ns >= newest):
+            self.preview_cache[slug] = fingerprint
+            return digest(source)
+        if archive:
+            self.run(self.quarto, ['render', '--profile', 'preview', '--no-clean'], timeout=120)
+        else:
+            stage = self.prepare_preview_project(slug)
+            self.run(self.quarto, ['render', f'posts/{slug}/index.qmd', '--profile', 'preview', '--no-clean'], timeout=120, cwd=stage)
+            generated = stage / '_rendered'
+            for file in generated.rglob('*'):
+                if file.is_file():
+                    destination = self.root / '_preview' / file.relative_to(generated)
+                    if not destination.exists() or destination.stat().st_size != file.stat().st_size or destination.stat().st_mtime_ns != file.stat().st_mtime_ns:
+                        destination.parent.mkdir(parents=True, exist_ok=True)
+                        shutil.copy2(file, destination)
+        # Do not certify an old render when typing continued in the background.
+        if self.read(slug)['text'] == source:
+            self.preview_cache[slug] = fingerprint
+        return digest(source)
+
+    def _worker(self, kind, slug, sequence, archive=False):
         try:
-            self.tools()
+            if kind != 'preview' or not self.quarto.exists():
+                self.tools()
             if kind == 'login':
                 self.progress('GitHub 연결 중 · 인증 안내를 기다려 주세요.')
                 self.run(self.gh, ['auth', 'login', '--hostname', 'github.com', '--git-protocol', 'https', '--web', '--scopes', 'workflow'], timeout=300, device_login=True)
@@ -242,24 +304,26 @@ class Workspace:
                 self.publish(slug)
             else:
                 while True:
-                    self.progress('독자 화면을 만드는 중')
-                    self.run(self.quarto, ['render', f'posts/{slug}/index.qmd', '--profile', 'preview'], timeout=120)
+                    self.progress('발행 화면을 확인하는 중 · 입력 내용은 즉시 표시됩니다.')
+                    revision = self.render_preview(slug, archive)
                     with self.job_lock:
-                        self.job.update(version=self.job['version'] + 1, url=f'/preview/posts/{slug}/index.html')
-                        next_slug = self.pending_preview
+                        self.job.update(version=self.job['version'] + 1, url=f'/preview/posts/{slug}/index.html', revision=revision)
+                        pending = self.pending_preview
                         self.pending_preview = None
-                    if not next_slug:
-                        break
-                    slug = next_slug
-                self.progress('미리보기 준비 완료 · 편집한 내용은 자동 저장됩니다.')
+                        if not pending:
+                            self.job.update(busy=False, message='발행 화면 확인 완료 · 입력 즉시 갱신 / 자동 저장')
+                            return
+                    slug, archive = pending
         except Exception as error:
             self.log('오류: ' + str(error))
             with self.job_lock:
-                self.job.update(error=True, message=str(error))
+                if sequence == self.job_sequence:
+                    self.job.update(error=True, message=str(error))
         finally:
             with self.job_lock:
-                self.job['busy'] = False
-                self.pending_preview = None
+                if sequence == self.job_sequence:
+                    self.job['busy'] = False
+                    self.pending_preview = None
 
     def publish(self, slug):
         self.progress('GitHub 연결과 저장소 확인')
