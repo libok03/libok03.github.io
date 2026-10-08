@@ -58,6 +58,20 @@
       const count = seen.get(base) || 0; seen.set(base,count+1); heading.id = base + (count ? '-' + count : '');
     });
     container.querySelectorAll('pre:not(.mermaid)').forEach(pre => { pre.classList.add('sourceCode'); });
+    container.querySelectorAll('img').forEach(image => {
+      image.style.maxWidth = '100%'; image.style.height = 'auto';
+      const original = image.getAttribute('src');
+      let attempts = 0;
+      image.addEventListener('error', () => {
+        if(!original || attempts++ >= 12)return;
+        const url = new URL(original, document.baseURI);
+        if(url.origin !== new URL(document.baseURI).origin)return;
+        setTimeout(() => {
+          if(!image.isConnected)return;
+          url.searchParams.set('asset-refresh', String(Date.now())); image.src = url.href;
+        },250);
+      });
+    });
     const toc = document.querySelector('#TOC ul');
     if(toc){toc.replaceChildren();container.querySelectorAll('h2,h3').forEach(heading=>{
       const item=document.createElement('li');const link=document.createElement('a');

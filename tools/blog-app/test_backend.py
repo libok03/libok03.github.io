@@ -67,6 +67,16 @@ class WorkspaceTests(unittest.TestCase):
     def test_unknown_job_is_rejected(self):
         with self.assertRaises(ValueError): self.w.start('shell','test-review')
 
+    def test_inserted_image_is_available_without_render(self):
+        image = self.root / 'selected.png'
+        image.write_bytes(b'png-test-data')
+        result = self.w.image('test-review', image)
+        import re
+        name = re.search(r'figures/([^)]*)',result['markdown']).group(1)
+        source = self.root / 'posts/test-review/figures' / name
+        preview = self.root / '_preview/posts/test-review/figures' / name
+        self.assertEqual(source.read_bytes(),preview.read_bytes())
+
     def test_preview_project_renders_only_active_article(self):
         stage = self.w.prepare_preview_project('test-review')
         import yaml

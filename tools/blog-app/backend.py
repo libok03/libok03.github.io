@@ -428,4 +428,7 @@ class Workspace:
         folder.mkdir(exist_ok=True)
         name = f'figure-{time.time_ns()}{ext}'
         shutil.copy2(source, folder / name)
+        preview = self.root / '_preview/posts' / slug / 'figures' / name
+        preview.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(folder / name, preview)
         return {'markdown': f'\n![그림 설명](figures/{name})\n'}
