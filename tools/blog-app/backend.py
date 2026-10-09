@@ -296,6 +296,10 @@ class Workspace:
             if kind != 'preview' or not self.quarto.exists():
                 self.tools()
             if kind == 'login':
+                status = self.run(self.gh, ['auth','status','--hostname','github.com'], allow_failure=True)
+                if status:
+                    self.progress('GitHub 연결이 확인되었습니다. 저장소 창을 열거나 배포할 수 있습니다.')
+                    return
                 self.progress('GitHub 연결 중 · 인증 안내를 기다려 주세요.')
                 self.run(self.gh, ['auth', 'login', '--hostname', 'github.com', '--git-protocol', 'https', '--web', '--scopes', 'workflow'], timeout=300, device_login=True)
                 self.run(self.gh, ['auth', 'setup-git', '--hostname', 'github.com'])

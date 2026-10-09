@@ -2,25 +2,29 @@
   if(window.paperLiveAdapterLoaded)return;
   window.paperLiveAdapterLoaded=true;
   const escape = text => String(text).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const sheet=document.createElement('link');sheet.rel='stylesheet';sheet.href=new URL('vendor/katex/katex.embedded.css',document.currentScript.src).href;
+  sheet.onload=()=>document.fonts.load('16px KaTeX_Main').then(fonts=>window.parent.postMessage({type:'paper-math-fonts-ready',loaded:fonts.length>0},'*')).catch(()=>{});
+  document.head.append(sheet);
+  const mathCache=new Map();
+  function formula(text,display) {
+    const key=(display?'block:':'inline:')+text;
+    if(!mathCache.has(key)) {
+      mathCache.set(key,katex.renderToString(text,{displayMode:display,throwOnError:false,trust:false,strict:'ignore'}));
+      if(mathCache.size>1000)mathCache.delete(mathCache.keys().next().value);
+    }
+    return mathCache.get(key);
+  }
   const parser = new marked.Marked({gfm:true});
   parser.use({extensions:[
-    {name:'displayMath',level:'block',start:src=>src.indexOf('$$'),tokenizer(src){const m=/^\$\$\s*\n?([\s\S]*?)\$\$(?:\s*\{[^\n}]*\})?\s*(?:\n|$)/.exec(src);if(m)return {type:'displayMath',raw:m[0],text:m[1]};},renderer(token){return `<div class="math display">\\[${escape(token.text)}\\]</div>`;}},
-    {name:'inlineMath',level:'inline',start:src=>src.indexOf('$'),tokenizer(src){const m=/^\$([^$\n]+)\$/.exec(src);if(m)return {type:'inlineMath',raw:m[0],text:m[1]};},renderer(token){return `<span class="math inline">\\(${escape(token.text)}\\)</span>`;}},
+    {name:'displayMath',level:'block',start:src=>src.indexOf('$$'),tokenizer(src){const m=/^\$\$\s*\n?([\s\S]*?)\$\$(?:\s*\{[^\n}]*\})?\s*(?:\n|$)/.exec(src);if(m)return {type:'displayMath',raw:m[0],text:m[1]};},renderer(token){return formula(token.text,true);}},
+    {name:'inlineMath',level:'inline',start:src=>src.indexOf('$'),tokenizer(src){const m=/^\$([^$\n]+)\$/.exec(src);if(m)return {type:'inlineMath',raw:m[0],text:m[1]};},renderer(token){return formula(token.text,false);}},
     {name:'diagram',level:'block',start:src=>src.indexOf('```{mermaid}'),tokenizer(src){const m=/^```\{mermaid\}\s*\n([\s\S]*?)\n```\s*(?:\n|$)/.exec(src);if(m)return {type:'diagram',raw:m[0],text:m[1]};},renderer(token){return `<pre class="mermaid">${escape(token.text)}</pre>`;}},
     {name:'callout',level:'block',start:src=>src.indexOf('::: {'),tokenizer(src){const m=/^::: \{\.callout-([\w-]+)(?:\s+title="([^"]*)")?\}\s*\n([\s\S]*?)\n:::\s*(?:\n|$)/.exec(src);if(m)return {type:'callout',raw:m[0],title:m[2]||'',tokens:this.lexer.blockTokens(m[3])};},renderer(token){return `<aside class="callout"><strong>${escape(token.title)}</strong>${this.parser.parse(token.tokens)}</aside>`;}}
   ]});
-  let last = 0, mathLoading, diagramLoading;
+  let last = 0, diagramLoading;
   const load = src => new Promise((resolve,reject)=>{const script=document.createElement('script');script.src=src;script.onload=resolve;script.onerror=reject;document.head.append(script);});
   async function enrich(container, sequence) {
     try {
-      if(container.querySelector('.math')) {
-        if(!window.MathJax?.typesetPromise) {
-          mathLoading ||= load('https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js');
-          await mathLoading;
-          await window.MathJax?.startup?.promise;
-        }
-        if(sequence===last) await window.MathJax?.typesetPromise?.([container]);
-      }
       if(container.querySelector('.mermaid')) {
         if(!window.mermaid) diagramLoading ||= load('/preview/site_libs/quarto-diagram/mermaid.min.js');
         if(diagramLoading) await diagramLoading;
@@ -79,7 +83,7 @@
       if(heading.tagName==='H3')item.style.paddingLeft='12px';item.append(link);toc.append(item);
     });}
     window.scrollTo(0,position);
-    window.parent.postMessage({type:'paper-live-painted',sequence:last,sanitized:!container.querySelector('script,[onerror],[onclick]')},'*');
+    window.parent.postMessage({type:'paper-live-painted',sequence:last,sanitized:!container.querySelector('script,[onerror],[onclick]'),mathCount:container.querySelectorAll('.katex').length,mathErrors:container.querySelectorAll('.katex-error').length},'*');
     enrich(container,last);
   });
   window.parent.postMessage({type:'paper-live-ready'},'*');

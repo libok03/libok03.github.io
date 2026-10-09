@@ -46,7 +46,7 @@ def make_server(workspace):
                 self.send_error(404)
                 return
             if is_article and not getattr(workspace, 'legacy_preview_server', False):
-                adapter = b'<script src="/vendor/marked.umd.js"></script><script src="/vendor/purify.min.js"></script><script src="/live-reader.js"></script>'
+                adapter = b'<script src="/vendor/marked.umd.js"></script><script src="/vendor/purify.min.js"></script><script src="/vendor/katex/katex.min.js"></script><script src="/live-reader.js"></script>'
                 content = content.replace(b'</body>', adapter + b'</body>')
             self.send_response(200)
             self.send_header('Content-Type', (mimetypes.guess_type(file.name)[0] or 'application/octet-stream') + ('; charset=utf-8' if file.suffix in {'.html', '.js', '.css'} else ''))

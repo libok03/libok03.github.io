@@ -20,6 +20,10 @@ for name in ['styles', 'assets']:
 file = root / 'posts/latency-check/index.qmd'
 file.parent.mkdir(parents=True)
 source = '---\ntitle: "실시간 미리보기 검사"\ndraft: true\n---\n\n## 확인\n\n첫 문장.\n\n$x^2$\n'
+if '--article-math' in sys.argv:
+    source = (project / 'posts/first-review/index.qmd').read_text(encoding='utf-8')
+    if (project / 'posts/first-review/figures').exists():
+        shutil.copytree(project / 'posts/first-review/figures', file.parent / 'figures')
 file.write_text(source, encoding='utf-8')
 workspace = Workspace(root)
 workspace.quarto = project / '.tools/bin/quarto.exe'
@@ -42,6 +46,15 @@ def check():
         assert window.evaluate_js('!!window.lastLivePaint'), 'live preview did not initialize'
         state = window.evaluate_js('({id:window.draftState().id,sequence:window.lastLivePaint.sequence})')
         assert state['id'] == 'latency-check'
+        assert window.evaluate_js('window.lastLivePaint.mathCount') > 0, 'formulas were not rendered'
+        assert window.evaluate_js('window.lastLivePaint.mathErrors') == 0, 'formula parsing failed'
+        for _ in range(50):
+            if window.evaluate_js('window.mathFontsReady === true'):
+                break
+            time.sleep(.05)
+        assert window.evaluate_js('window.mathFontsReady === true'), 'local math fonts did not load'
+        result['mathCount'] = window.evaluate_js('window.lastLivePaint.mathCount')
+        result['mathFontsReady'] = True
         timings=[]
         for index in range(5):
             before=window.evaluate_js('window.lastLivePaint.sequence')
