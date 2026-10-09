@@ -336,7 +336,7 @@ class Workspace:
         except Exception as error:
             raise RuntimeError('먼저 GitHub 연결 버튼으로 로그인하세요.') from error
         git = lambda args, **kw: self.run('git', args, **kw)
-        api = lambda args: json.loads(self.run(self.gh, ['api', *args]) or 'null')
+        api = self.github_read
         remote = git(['remote', 'get-url', 'origin']).strip()
         if not re.fullmatch(r'(?:https://github\.com/|git@github\.com:)libok03/libok03\.github\.io(?:\.git)?/?', remote):
             raise RuntimeError('블로그 GitHub 저장소 연결을 확인해 주세요.')
@@ -418,6 +418,18 @@ class Workspace:
             if not committed and file.read_text(encoding='utf-8') == ready:
                 self._write(file, original)
             raise
+
+    def github_read(self, args):
+        """Retry only read-only API calls; never repeat a push or dispatch."""
+        for attempt in range(4):
+            try:
+                return json.loads(self.run(self.gh, ['api', *args]) or 'null')
+            except Exception as error:
+                transient = re.search(r'error connecting|wsarecv|connection.*(?:abort|reset)|timed? out|timeout|TLS handshake|network|EOF', str(error), re.I)
+                if not transient or attempt == 3 or self.cancel.is_set():
+                    raise
+                self.progress('GitHub 결과 확인 연결 재시도 · ' + str(attempt + 1))
+                self.wait(2 ** attempt)
 
     def wait(self, seconds):
         if self.cancel.wait(seconds):

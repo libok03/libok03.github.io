@@ -1,0 +1,14 @@
+const assert=require('node:assert/strict');
+const {DeploymentStatus:d}=require('./ui/deployment-status.js');
+const state={busy:false,kind:'publish',error:true,message:'wsarecv: connection aborted',logs:'https://github.com/libok03/libok03.github.io/actions/runs/37900304963'};
+assert.equal(d.recoveryRun(state),'37900304963');
+assert.equal(d.recoveryRun({...state,busy:true}),null);
+assert.equal(d.recoveryRun({...state,logs:''}),null);
+assert.equal(d.recoveryRun({...state,message:'build failed'}),null);
+const run={id:37900304963,repository:{full_name:d.repo},status:'completed',conclusion:'success'};
+assert.equal(d.result(run,run.id).error,false);
+assert.equal(d.result({...run,conclusion:'failure'},run.id).error,true);
+assert.equal(d.result({...run,status:'in_progress'},run.id).done,false);
+assert.throws(()=>d.result(run,'123'));
+assert.throws(()=>d.result({...run,repository:{full_name:'other/repo'}},run.id));
+console.log('Deployment recovery checks passed.');

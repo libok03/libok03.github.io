@@ -9,6 +9,17 @@ from backend import Workspace, set_metadata, metadata, allowed_stage, digest
 SOURCE = '---\ntitle: "원문"\ndraft: true\ndate: 2026-10-07\ncategories:\n  - 논문 리뷰\n---\n\n본문\n'
 
 class WorkspaceTests(unittest.TestCase):
+    def test_api_retries_transient_reads(self):
+        with patch.object(self.w, 'run', side_effect=[RuntimeError('wsarecv: connection aborted'), '{"ok":true}']) as run, patch.object(self.w, 'wait'):
+            self.assertEqual(self.w.github_read(['repos/example']), {'ok': True})
+            self.assertEqual(run.call_count, 2)
+
+    def test_api_does_not_retry_permissions(self):
+        with patch.object(self.w, 'run', side_effect=RuntimeError('HTTP 403')) as run:
+            with self.assertRaisesRegex(RuntimeError, '403'):
+                self.w.github_read(['repos/example'])
+            self.assertEqual(run.call_count, 1)
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
