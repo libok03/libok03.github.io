@@ -1,0 +1,34 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const path=require('node:path');
+const vm=require('node:vm');
+const script=fs.readFileSync(path.join(__dirname,'../../styles/research-ui.html'),'utf8').replace(/^<script>\s*/,'').replace(/\s*<\/script>\s*$/,'');
+function simulate(reduced=false,fine=true){
+  const classes=new Set(),styles={},handlers={},listeners={},frames=new Map();let sequence=0,observed=0;
+  const card={style:{setProperty(){}},classList:{add(name){classes.add(name)}}};
+  const art={style:{setProperty(k,v){styles[k]=v}},getBoundingClientRect(){return {left:0,top:0,width:200,height:100}},addEventListener(k,v){handlers[k]=v}};
+const context={document:{getElementById(){return null},body:{classList:{contains(){return false},add(k){classes.add(k)}}},addEventListener(k,fn){fn()},querySelector(s){return s.includes('hero-art')?art:null},querySelectorAll(){return [card]}},window:{matchMedia(q){return {matches:q.includes('reduced-motion')?reduced:fine}}},scrollY:200,addEventListener(k,v){listeners[k]=v},requestAnimationFrame(fn){const id=++sequence;frames.set(id,fn);return id},cancelAnimationFrame(id){frames.delete(id)}};
+  context.IntersectionObserver=class{constructor(callback){this.callback=callback}observe(element){observed++;this.callback([{isIntersecting:true,target:element}])}unobserve(){}};
+  context.window.IntersectionObserver=context.IntersectionObserver;
+  vm.runInNewContext(script,context);
+  const flush=()=>{for(const [id,fn] of frames){frames.delete(id);fn()}};
+  return {classes,styles,handlers,listeners,flush,observed,context};
+}
+const normal=simulate();
+assert(normal.classes.has('motion-ready'));
+assert(normal.classes.has('is-visible'));
+assert.equal(normal.observed,1);
+normal.handlers.pointermove({clientX:200,clientY:100});normal.flush();
+assert.equal(normal.styles['--tilt-x'],'-3deg');
+assert.equal(normal.styles['--tilt-y'],'4deg');
+normal.handlers.pointerleave();
+assert.equal(normal.styles['--tilt-x'],'0deg');
+normal.context.scrollY=10000;normal.listeners.scroll();normal.flush();
+assert.equal(normal.styles['--scroll-shift'],'38px');
+const reduced=simulate(true);
+assert.equal(reduced.classes.has('motion-ready'),false);
+assert.equal(reduced.observed,0);
+assert.equal(Object.keys(reduced.handlers).length,0);
+const mobile=simulate(false,false);
+assert.equal(Object.keys(mobile.handlers).length,0);
+console.log('Homepage motion, reduced-motion, and mobile checks passed.');

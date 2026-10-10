@@ -6,21 +6,31 @@ document.addEventListener('DOMContentLoaded', () => {
       .then(module => module.mountComments()).catch(() => {});
   }
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduceMotion) document.body.classList.add('motion-ready');
   if (!reduceMotion && 'IntersectionObserver' in window) {
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer.unobserve(entry.target); } });
     }, {threshold: .07});
-    document.querySelectorAll('.paper-card,.reading-principles').forEach(element => { element.classList.add('will-reveal'); observer.observe(element); });
+    document.querySelectorAll('.paper-card,.archive-heading,.reading-principles,.principle').forEach((element, index) => { element.style.setProperty('--reveal-delay', `${Math.min(index % 4 * 90, 270)}ms`); element.classList.add('will-reveal'); observer.observe(element); });
   }
   const art = document.querySelector('.awards-hero .hero-art');
   if (art && !reduceMotion && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    let pointerFrame = 0;
     art.addEventListener('pointermove', event => {
       const box = art.getBoundingClientRect();
       const x = (event.clientX - box.left) / box.width - .5;
       const y = (event.clientY - box.top) / box.height - .5;
-      art.style.transform = `perspective(900px) rotateX(${-y * 5}deg) rotateY(${x * 7}deg) rotateZ(-2deg)`;
+      cancelAnimationFrame(pointerFrame);
+      pointerFrame = requestAnimationFrame(() => {
+        art.style.setProperty('--tilt-x', `${-y * 6}deg`);
+        art.style.setProperty('--tilt-y', `${x * 8}deg`);
+      });
     });
-    art.addEventListener('pointerleave', () => { art.style.transform = ''; });
+    art.addEventListener('pointerleave', () => { cancelAnimationFrame(pointerFrame); art.style.setProperty('--tilt-x', '0deg'); art.style.setProperty('--tilt-y', '0deg'); });
+    let scrollFrame = 0;
+    const updateArt = () => { scrollFrame = 0; art.style.setProperty('--scroll-shift', `${Math.min(scrollY * .065, 38)}px`); };
+    addEventListener('scroll', () => { if (!scrollFrame) scrollFrame = requestAnimationFrame(updateArt); }, {passive: true});
+    updateArt();
   }
   const search = document.getElementById('paper-search');
   if (search) search.addEventListener('input', () => {
