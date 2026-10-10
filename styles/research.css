@@ -150,18 +150,35 @@ figcaption{font-size:.73rem;color:var(--paper-muted);line-height:1.7}
 @keyframes notes-float{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-14px) rotate(1deg)}}
 @keyframes notes-dot{0%,100%{transform:scale(1)}50%{transform:scale(.78)}}
 @keyframes notes-scroll{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
-.paper-home.motion-ready .hero-wordmark>span,.paper-home.motion-ready .hero-wordmark>em{display:inline-block;animation:notes-arrive 1s cubic-bezier(.16,1,.3,1) both}
-.paper-home.motion-ready .hero-wordmark>em{animation-delay:.14s}
-.paper-home.motion-ready .hero-copy{animation:notes-arrive .95s .25s cubic-bezier(.16,1,.3,1) both}
-.paper-home.motion-ready .hero-art img{animation:notes-float 6s ease-in-out infinite;transform-origin:center}
-.paper-home.motion-ready .wordmark-dot{display:inline-block;animation:notes-dot 4s 1s ease-in-out infinite;transform-origin:center 80%}
-.paper-home.motion-ready .hero-scroll>span:last-child{animation:notes-scroll 2.2s ease-in-out infinite}
-.paper-home .will-reveal{transform:translateY(38px);transition:opacity .8s var(--reveal-delay,0ms) ease,transform .8s var(--reveal-delay,0ms) cubic-bezier(.16,1,.3,1)}
+.paper-home.motion-ready .hero-wordmark>span,.paper-home.motion-ready .hero-wordmark>em{display:inline-block;animation:notes-arrive 1.9s cubic-bezier(.22,.61,.36,1) both}
+.paper-home.motion-ready .hero-wordmark>em{animation-delay:.35s}
+.paper-home.motion-ready .hero-copy{animation:notes-arrive 1.8s .55s cubic-bezier(.22,.61,.36,1) both}
+.paper-home.motion-ready .hero-art img{animation:notes-float 10s ease-in-out infinite;transform-origin:center}
+.paper-home.motion-ready .wordmark-dot{display:inline-block;animation:notes-dot 7s 1s ease-in-out infinite;transform-origin:center 80%}
+.paper-home.motion-ready .hero-scroll>span:last-child{animation:notes-scroll 3.6s ease-in-out infinite}
+.paper-home .will-reveal{transform:translateY(38px);transition:opacity 1.5s var(--reveal-delay,0ms) ease,transform 1.5s var(--reveal-delay,0ms) cubic-bezier(.22,.61,.36,1)}
 .paper-home .will-reveal.is-visible{transform:translateY(0)}
-.paper-home .paper-card-cover img{transition:transform .7s cubic-bezier(.16,1,.3,1),filter .7s ease}
+.paper-home .paper-card-cover img{transition:transform 1.1s cubic-bezier(.22,.61,.36,1),filter 1.1s ease,clip-path 1.9s var(--reveal-delay,0ms) cubic-bezier(.22,.61,.36,1)}
 .paper-home .paper-card:hover .paper-card-cover img,.paper-home .paper-card:focus-within .paper-card-cover img{transform:scale(1.065);filter:saturate(1.12)}
-.paper-home .paper-card-cover::after{content:"";position:absolute;inset:-30%;background:linear-gradient(110deg,transparent 35%,#ffffff30 50%,transparent 65%);transform:translateX(-100%);pointer-events:none;transition:transform .85s ease}
+.paper-home .paper-card-cover::after{content:"";position:absolute;inset:-30%;background:linear-gradient(110deg,transparent 35%,#ffffff30 50%,transparent 65%);transform:translateX(-100%);pointer-events:none;transition:transform 1.4s ease}
 .paper-home .paper-card:hover .paper-card-cover::after,.paper-home .paper-card:focus-within .paper-card-cover::after{transform:translateX(100%)}
 .paper-home .card-bottom>a{display:inline-block;transition:transform .3s ease}
 .paper-home .paper-card:hover .card-bottom>a,.paper-home .paper-card:focus-within .card-bottom>a{transform:translateX(5px)}
-@media(prefers-reduced-motion:reduce){.paper-home.motion-ready *, .paper-home .will-reveal,.paper-home .paper-card-cover::after{animation:none!important;transition:none!important}.paper-home .will-reveal{opacity:1!important;transform:none!important}.paper-home .awards-hero .hero-art,.paper-home .paper-card:hover .paper-card-cover img,.paper-home .paper-card:focus-within .paper-card-cover img,.paper-home .card-bottom>a,.paper-home .research-button>span{transform:none!important}}
+/* Ambient centerpiece and scroll-led editorial reveals. No scroll hijacking. */
+@keyframes notes-atmosphere{0%,100%{transform:translate(-3%,2%) scale(.94)}50%{transform:translate(4%,-3%) scale(1.05)}}
+.paper-home .awards-hero{position:relative;isolation:isolate}
+.paper-home.motion-ready .awards-hero::before{content:'';position:absolute;inset:18% 0 4% 35%;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at center,color-mix(in srgb,var(--paper-accent) 11%,transparent),transparent 68%);animation:notes-atmosphere 18s ease-in-out infinite}
+.paper-home .paper-card.will-reveal .paper-card-cover img{clip-path:inset(0 100% 0 0)}
+.paper-home .paper-card.will-reveal.is-visible .paper-card-cover img{clip-path:inset(0)}
+.paper-home .archive-heading,.paper-home .reading-principles{position:relative}
+.paper-home .archive-heading{padding-top:1.5rem}
+.paper-home .archive-heading::before,.paper-home .reading-principles::before{content:'';position:absolute;top:0;left:0;width:100%;height:1px;background:var(--paper-accent);opacity:.35;transform-origin:left;pointer-events:none;transition:transform 1.8s cubic-bezier(.22,.61,.36,1)}
+.paper-home .archive-heading.will-reveal::before,.paper-home .reading-principles.will-reveal::before{transform:scaleX(0)}
+.paper-home .archive-heading.is-visible::before,.paper-home .reading-principles.is-visible::before{transform:scaleX(1)}
+.paper-home .paper-card h3 a{background-image:linear-gradient(var(--paper-accent),var(--paper-accent));background-repeat:no-repeat;background-position:left bottom;background-size:0 1px;transition:background-size .85s cubic-bezier(.22,.61,.36,1)}
+.paper-home .paper-card h3 a:hover,.paper-home .paper-card h3 a:focus-visible{background-size:100% 1px}
+.paper-home.motion-ready .research-topics>span{animation:notes-arrive 1.6s .8s cubic-bezier(.22,.61,.36,1) both}
+.paper-home.motion-ready .research-topics>span:nth-child(2){animation-delay:1s}
+.paper-home.motion-ready .research-topics>span:nth-child(3){animation-delay:1.2s}
+.paper-home.motion-ready .research-topics>span:nth-child(4){animation-delay:1.4s}
+@media(prefers-reduced-motion:reduce){.paper-home *,.paper-home *::before,.paper-home *::after{animation:none!important;transition:none!important}.paper-home .will-reveal{opacity:1!important;transform:none!important}.paper-home .paper-card.will-reveal .paper-card-cover img{clip-path:none!important}.paper-home .archive-heading::before,.paper-home .reading-principles::before{transform:none!important}.paper-home .awards-hero .hero-art,.paper-home .paper-card:hover .paper-card-cover img,.paper-home .paper-card:focus-within .paper-card-cover img,.paper-home .card-bottom>a,.paper-home .research-button>span{transform:none!important}}

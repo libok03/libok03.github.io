@@ -19,3 +19,12 @@
 아카이브와 카드에는 순차 등장, 표지 확대, 빛 반사, 읽기 링크 이동을 적용했습니다.
 공개 글이 하나인 경우 표지와 소개를 좌우로 연결한 featured 레이아웃을 사용합니다.
 본문은 고정된 읽기 화면을 유지하며 reduced-motion 환경에서는 장식 움직임을 끕니다.
+
+### Additional references and slower pacing
+
+- [Velizar Delyanov — Portfolio](https://www.cssdesignawards.com/sites/velizar-delyanov-portfolio/48155/): 선정 페이지가 소개하는 fluid background와 mini-interactions에서 착안해, 저채도의 배경 흐름과 제목 밑줄 반응을 자체 구현했습니다. WebGL이나 원본 코드는 사용하지 않습니다.
+- [The-Artery / Deconstrukt #9](https://www.cssdesignawards.com/blog/deconstrukt-9-new-folio-for-the-artery-a-future-classic/302/): 소개된 선 애니메이션과 스크롤 등장 접근을 구간 구분선 그리기와 표지의 좌우 마스크 공개로 재해석했습니다.
+
+타이틀 1.9초, 소개 1.8초, 스크롤 등장 1.5초, 표지 공개 1.9초로 시간을 늘렸습니다.
+순차 등장 간격은 160ms이며, 표지의 부유 주기는 10초, 배경 흐름은 18초입니다.
+본문에는 적용하지 않으며 스크롤을 가로채거나 별도의 로딩 화면으로 접근을 막지 않습니다.

@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer.unobserve(entry.target); } });
     }, {threshold: .07});
-    document.querySelectorAll('.paper-card,.archive-heading,.reading-principles,.principle').forEach((element, index) => { element.style.setProperty('--reveal-delay', `${Math.min(index % 4 * 90, 270)}ms`); element.classList.add('will-reveal'); observer.observe(element); });
+    document.querySelectorAll('.paper-card,.archive-heading,.reading-principles,.principle').forEach((element, index) => { element.style.setProperty('--reveal-delay', `${Math.min(index % 4 * 160, 480)}ms`); element.classList.add('will-reveal'); observer.observe(element); });
   }
   const art = document.querySelector('.awards-hero .hero-art');
   if (art && !reduceMotion && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
