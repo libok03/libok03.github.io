@@ -1,0 +1,471 @@
+/* Reading surfaces: generous space for arguments, equations, and evidence. */
+.paper-article {
+  --article-tint: color-mix(in srgb, var(--paper-accent) 5%, var(--paper-bg));
+  --article-frame: color-mix(in srgb, var(--paper-accent) 15%, var(--paper-rule));
+}
+
+.paper-article main.content {
+  min-width: 0;
+  line-height: 1.95;
+  font-size: 1rem;
+  padding-bottom: 3rem;
+}
+
+.paper-article #title-block-header {
+  position: relative;
+  margin-bottom: 3.5rem;
+  padding: 1.8rem 0 2.4rem;
+  border-top: 3px solid var(--paper-accent);
+  border-bottom: 1px solid var(--article-frame);
+}
+
+.paper-article .article-eyebrow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .6rem;
+  margin-bottom: 1.8rem;
+  font-size: .62rem;
+  letter-spacing: .09em;
+}
+
+.paper-article h1.title {
+  max-width: 23ch;
+  margin-bottom: 1.5rem;
+  font-size: clamp(2.1rem, 3.8vw, 3.45rem);
+  font-weight: 600;
+  letter-spacing: -.052em;
+  line-height: 1.14;
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+
+.paper-article #title-block-header .description {
+  max-width: 58ch;
+  margin-top: 1.35rem;
+  color: var(--paper-muted);
+  font-size: 1.04rem;
+  line-height: 1.9;
+  letter-spacing: -.02em;
+}
+
+.paper-article .quarto-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .45rem;
+}
+
+.paper-article .quarto-categories .quarto-category {
+  margin: 0;
+  padding: .3rem .75rem;
+  border: 1px solid var(--article-frame);
+  border-radius: 99px;
+  background: var(--article-tint);
+  color: var(--paper-accent);
+  font-size: .64rem;
+  line-height: 1.6;
+}
+
+.paper-article .quarto-title-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.3rem 2.5rem;
+  margin-top: 1.7rem;
+  padding-top: 1.35rem;
+  border-top: 1px solid var(--paper-rule);
+}
+
+.paper-article .quarto-title-meta-heading {
+  margin-bottom: .2rem;
+  font-size: .58rem !important;
+  letter-spacing: .11em;
+}
+
+.paper-article .quarto-title-meta-contents,
+.paper-article .quarto-title-meta-contents p {
+  margin: 0;
+  font-size: .76rem;
+  line-height: 1.6;
+}
+
+.paper-article main.content > section,
+.paper-article main.content section section {
+  min-width: 0;
+}
+
+.paper-article main.content p {
+  margin-bottom: 1.3rem;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
+.paper-article main.content h2 {
+  margin-top: 4.3rem;
+  margin-bottom: 1.6rem;
+  padding-top: 1.15rem;
+  padding-bottom: 0;
+  border-top: 1px solid var(--article-frame);
+  border-bottom: 0;
+  font-size: clamp(1.45rem, 2.1vw, 1.9rem);
+  font-weight: 650;
+  letter-spacing: -.045em;
+  line-height: 1.4;
+  text-wrap: balance;
+  scroll-margin-top: 7rem;
+}
+
+.paper-article main.content > section:first-of-type > h2 {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.paper-article main.content h3 {
+  margin-top: 2.8rem;
+  margin-bottom: 1.15rem;
+  font-size: 1.23rem;
+  letter-spacing: -.03em;
+  line-height: 1.55;
+  scroll-margin-top: 7rem;
+}
+
+.paper-article main.content h4 {
+  margin-top: 2rem;
+  margin-bottom: .9rem;
+  font-size: 1.02rem;
+  line-height: 1.6;
+  scroll-margin-top: 7rem;
+}
+
+.paper-article main.content strong {
+  font-weight: 650;
+  color: var(--paper-text);
+}
+
+.paper-article main.content :is(p, li, td, figcaption) a:not(.lightbox) {
+  text-decoration-thickness: 1px;
+  text-decoration-color: color-mix(in srgb, var(--paper-accent) 40%, transparent);
+  text-underline-offset: .22em;
+  transition: text-decoration-color .25s ease, color .25s ease;
+}
+
+.paper-article main.content :is(p, li, td, figcaption) a:hover {
+  text-decoration-color: currentColor;
+}
+
+.paper-article main.content :is(ul, ol) {
+  padding-left: 1.4rem;
+  margin-bottom: 1.5rem;
+}
+
+.paper-article main.content li {
+  padding-left: .2rem;
+  margin-bottom: .45rem;
+}
+
+.paper-article main.content li::marker {
+  color: var(--paper-accent);
+}
+
+.paper-article main.content blockquote {
+  margin: 2rem 0;
+  padding: 1.3rem 1.5rem;
+  border: 0;
+  border-left: 3px solid var(--paper-accent);
+  border-radius: 0 6px 6px 0;
+  background: var(--article-tint);
+  font-size: .98rem;
+  color: var(--paper-text);
+}
+
+.paper-article main.content blockquote > :last-child {
+  margin-bottom: 0;
+}
+
+.paper-article .quarto-figure {
+  margin-block: 2.6rem;
+}
+
+.paper-article .quarto-figure figure {
+  width: 100%;
+  margin: 0;
+}
+
+.paper-article .quarto-figure figure > p {
+  margin-bottom: .8rem;
+}
+
+.paper-article .quarto-figure img,
+.paper-article main.content > p > img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin-inline: auto;
+  border: 1px solid var(--article-frame);
+  border-radius: 6px;
+  background: var(--paper-surface);
+}
+
+.paper-article a.lightbox {
+  display: block;
+  cursor: zoom-in;
+}
+
+.paper-article figcaption {
+  max-width: 68ch;
+  margin: .85rem auto 0;
+  padding-inline: .3rem;
+  font-size: .75rem;
+  line-height: 1.8;
+  color: var(--paper-muted);
+  text-align: center;
+}
+
+.paper-article .math.display {
+  display: block;
+  max-width: 100%;
+  margin-block: 1.65rem;
+  padding: .85rem 1rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border-left: 2px solid var(--article-frame);
+  background: var(--article-tint);
+  scrollbar-width: thin;
+  scrollbar-color: var(--paper-rule) transparent;
+}
+
+.paper-article .math.display mjx-container[display="true"],
+.paper-article .math.display .katex-display {
+  margin-block: .3rem !important;
+}
+
+.paper-article .math.inline {
+  color: inherit;
+}
+
+.paper-article div.sourceCode {
+  margin-block: 1.8rem;
+  border: 1px solid var(--article-frame);
+  border-radius: 8px;
+  background: var(--paper-surface);
+  box-shadow: 0 5px 18px -16px var(--paper-accent);
+}
+
+.paper-article pre.sourceCode {
+  margin: 0;
+  padding: 1.3rem 1.4rem;
+  font-size: .8rem;
+  line-height: 1.8;
+}
+
+.paper-article :not(pre) > code:not(.sourceCode) {
+  padding: .14em .36em;
+  border-radius: 3px;
+  background: var(--article-tint);
+  color: var(--paper-accent);
+  font-size: .88em;
+  overflow-wrap: anywhere;
+}
+
+.paper-article .code-copy-button {
+  border-radius: 4px;
+}
+
+.paper-article table {
+  width: 100%;
+  margin-block: 1.8rem 2.3rem;
+  border-top: 2px solid var(--paper-accent);
+  border-bottom: 1px solid var(--article-frame);
+  font-size: .85rem;
+  line-height: 1.8;
+  --bs-table-bg: transparent;
+  --bs-table-color: var(--paper-text);
+  --bs-table-border-color: var(--paper-rule);
+}
+
+.paper-article table :is(th, td) {
+  padding: .8rem .9rem;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+
+.paper-article table th {
+  background: var(--article-tint);
+  color: var(--paper-accent);
+  font-size: .74rem;
+  font-weight: 650;
+  letter-spacing: .01em;
+}
+
+.paper-article table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.paper-article .cell-output-display,
+.paper-article .table-responsive {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.paper-article .callout {
+  margin-block: 2rem;
+  border-color: var(--article-frame);
+  border-radius: 6px;
+}
+
+.paper-article #quarto-margin-sidebar nav[role="doc-toc"] {
+  padding: 1rem 0 1rem 1.15rem;
+  border-left: 1px solid var(--paper-rule);
+  font-size: .72rem;
+  line-height: 1.65;
+}
+
+.paper-article #quarto-margin-sidebar #toc-title {
+  margin-bottom: 1.25rem;
+  color: var(--paper-accent);
+  font-size: .58rem;
+  font-weight: 500;
+  letter-spacing: .09em;
+  line-height: 1.7;
+}
+
+.paper-article #quarto-margin-sidebar nav[role="doc-toc"] ul > li > a {
+  padding: .4rem .65rem;
+  border-left: 2px solid transparent;
+  border-radius: 0 4px 4px 0;
+  color: var(--paper-muted);
+  transition: color .25s ease, background .25s ease;
+}
+
+.paper-article #quarto-margin-sidebar nav[role="doc-toc"] ul > li > a:hover {
+  background: var(--article-tint);
+  color: var(--paper-text);
+}
+
+.paper-article #quarto-margin-sidebar nav[role="doc-toc"] ul > li > a.active {
+  border-left-color: var(--paper-accent);
+  background: var(--article-tint);
+  color: var(--paper-accent) !important;
+  font-weight: 600;
+}
+
+.paper-article .paper-comments {
+  margin-top: 4rem;
+  padding: 2rem 0 0;
+  border-top: 2px solid var(--paper-accent);
+}
+
+.paper-article #quarto-appendix {
+  background: var(--article-tint);
+  border-top: 1px solid var(--article-frame);
+}
+
+.paper-article.quarto-dark {
+  --article-tint: color-mix(in srgb, var(--paper-accent) 6%, var(--paper-bg));
+}
+
+.paper-article.quarto-dark .quarto-figure img {
+  border-color: var(--paper-rule);
+}
+
+@media (max-width: 991px) {
+  .paper-article #title-block-header {
+    padding-top: 1.4rem;
+  }
+
+  .paper-article h1.title {
+    max-width: 27ch;
+  }
+}
+
+@media (max-width: 575px) {
+  .paper-article main.content {
+    font-size: .95rem;
+    line-height: 1.9;
+  }
+
+  .paper-article #title-block-header {
+    padding-bottom: 1.7rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .paper-article h1.title {
+    font-size: clamp(1.9rem, 7.5vw, 2.55rem);
+    line-height: 1.19;
+    letter-spacing: -.045em;
+  }
+
+  .paper-article #title-block-header .description {
+    font-size: .94rem;
+  }
+
+  .paper-article .quarto-title-meta {
+    gap: 1rem 2rem;
+  }
+
+  .paper-article main.content h2 {
+    margin-top: 3.3rem;
+    margin-bottom: 1.3rem;
+  }
+
+  .paper-article main.content h3 {
+    font-size: 1.14rem;
+  }
+
+  .paper-article main.content p {
+    word-break: normal;
+  }
+
+  .paper-article .math.display {
+    padding: .7rem .65rem;
+    font-size: .92em;
+  }
+
+  .paper-article main.content blockquote {
+    padding: 1rem 1.15rem;
+  }
+
+  .paper-article table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+    font-size: .78rem;
+  }
+
+  .paper-article table :is(th, td) {
+    padding: .65rem;
+  }
+
+  .paper-article pre.sourceCode {
+    padding: 1rem;
+    font-size: .74rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .paper-article main.content a,
+  .paper-article #quarto-margin-sidebar a {
+    transition: none !important;
+  }
+}
+
+@media print {
+  .paper-article #title-block-header {
+    border-top-width: 1px;
+  }
+
+  .paper-article .math.display,
+  .paper-article div.sourceCode {
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .paper-article .quarto-figure,
+  .paper-article .math.display {
+    break-inside: avoid;
+  }
+
+  .paper-article .paper-comments {
+    display: none;
+  }
+}

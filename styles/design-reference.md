@@ -28,3 +28,13 @@
 타이틀 1.9초, 소개 1.8초, 스크롤 등장 1.5초, 표지 공개 1.9초로 시간을 늘렸습니다.
 순차 등장 간격은 160ms이며, 표지의 부유 주기는 10초, 배경 흐름은 18초입니다.
 본문에는 적용하지 않으며 스크롤을 가로채거나 별도의 로딩 화면으로 접근을 막지 않습니다.
+
+## Journal redesign — 2026-10-13
+
+- [Rafael Cespedes](https://www.cssdesignawards.com/sites/rafael-cespedes/49887/): 선정 페이지의 publication / working index 접근을 연구 노트 목록과 작은 색인, 큰 제목의 대비로 해석했습니다.
+- [Lucas Aufrere](https://www.cssdesignawards.com/sites/lucas-aufrere/49427/): 소개된 절제된 모션과 정교한 타이포그래피를 참고해 느린 등장과 일정한 편집 리듬을 유지했습니다.
+- [Studio K95](https://www.cssdesignawards.com/sites/studio-k95/49604/): 선정 페이지의 dark editorial 방향에서 착안한 짙은 녹색 첫 화면과 크림색 읽기 영역입니다.
+
+원본 사이트의 코드나 이미지를 가져오지 않았습니다. 궤도와 표현 공간을 표현한 자체 SVG, CSS 문서 표지, 느린 부유와 포인터 기울기를 사용합니다.
+히어로의 모션 버튼으로 움직임을 끌 수 있으며 OS 동작 감소 설정을 존중합니다. 다크 모드와 모바일, 검색 및 논문 본문을 함께 확인합니다.
+기존에 누적된 홈 CSS를 한 체계로 정리하고, 본문 스타일은 article-refinement.css로 분리했습니다.

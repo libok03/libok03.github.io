@@ -69,7 +69,9 @@ format:
     link-external-newwindow: true
     smooth-scroll: true
     include-after-body: styles/research-ui.html
-    css: styles/research.css
+    css:
+      - styles/research.css
+      - styles/article-refinement.css
     grid:
       body-width: 820px
       margin-width: 230px

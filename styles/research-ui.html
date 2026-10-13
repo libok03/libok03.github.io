@@ -5,18 +5,44 @@ document.addEventListener('DOMContentLoaded', () => {
     if (stylesheet) import(new URL('paper-comments.js', stylesheet.href).href)
       .then(module => module.mountComments()).catch(() => {});
   }
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (!reduceMotion) document.body.classList.add('motion-ready');
-  if (!reduceMotion && 'IntersectionObserver' in window) {
+  const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let storedMotion = 'on';
+  try { storedMotion = localStorage.getItem('paper-motion') || 'on'; } catch {}
+  let motionEnabled = false;
+  let revealsInitialized = false;
+  const motionButton = document.getElementById('motion-toggle');
+  function syncMotion() {
+    motionEnabled = !motionPreference.matches && storedMotion !== 'off';
+    document.body.classList.toggle('motion-ready', motionEnabled);
+    document.body.classList.toggle('motion-paused', !motionEnabled);
+    if (motionButton) {
+      motionButton.hidden = false;
+      motionButton.textContent = motionEnabled ? '모션 켜짐 Ⅱ' : '모션 꺼짐 ▶';
+      motionButton.setAttribute('aria-pressed', String(motionEnabled));
+    }
+    initializeReveals();
+  }
+  syncMotion();
+  motionPreference.addEventListener?.('change', syncMotion);
+  if (motionButton) motionButton.addEventListener('click', () => {
+    storedMotion = motionEnabled ? 'off' : 'on';
+    try { localStorage.setItem('paper-motion', storedMotion); } catch {}
+    syncMotion();
+  });
+  function initializeReveals() {
+    if (!motionEnabled || revealsInitialized || !('IntersectionObserver' in window)) return;
+    revealsInitialized = true;
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer.unobserve(entry.target); } });
     }, {threshold: .07});
-    document.querySelectorAll('.paper-card,.archive-heading,.reading-principles,.principle').forEach((element, index) => { element.style.setProperty('--reveal-delay', `${Math.min(index % 4 * 160, 480)}ms`); element.classList.add('will-reveal'); observer.observe(element); });
+    document.querySelectorAll('.paper-card,.archive-heading,.principles-intro,.principle,.research-outro').forEach((element, index) => { element.style.setProperty('--reveal-delay', `${Math.min(index % 3 * 160, 320)}ms`); element.classList.add('will-reveal'); observer.observe(element); });
+    document.addEventListener('focusin', event => event.target.closest?.('.will-reveal')?.classList.add('is-visible'));
   }
   const art = document.querySelector('.awards-hero .hero-art');
-  if (art && !reduceMotion && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+  if (art && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
     let pointerFrame = 0;
     art.addEventListener('pointermove', event => {
+      if (!motionEnabled) return;
       const box = art.getBoundingClientRect();
       const x = (event.clientX - box.left) / box.width - .5;
       const y = (event.clientY - box.top) / box.height - .5;
@@ -28,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     art.addEventListener('pointerleave', () => { cancelAnimationFrame(pointerFrame); art.style.setProperty('--tilt-x', '0deg'); art.style.setProperty('--tilt-y', '0deg'); });
     let scrollFrame = 0;
-    const updateArt = () => { scrollFrame = 0; art.style.setProperty('--scroll-shift', `${Math.min(scrollY * .065, 38)}px`); };
+    const updateArt = () => { scrollFrame = 0; if (motionEnabled) art.style.setProperty('--scroll-shift', `${Math.min(scrollY * .065, 38)}px`); };
     addEventListener('scroll', () => { if (!scrollFrame) scrollFrame = requestAnimationFrame(updateArt); }, {passive: true});
     updateArt();
   }
